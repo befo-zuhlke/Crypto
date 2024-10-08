@@ -20,13 +20,13 @@ class FeatureFlagProvider {
         }
     }
     
-    func getValue(falg: FeatureFlagType) -> Bool {
-        flagsRelay.value[falg] ?? false
+    func getValue(flag: FeatureFlagType) -> Bool {
+        flagsRelay.value[flag] ?? false
     }
     
-    func update(falg: FeatureFlagType, newValue: Bool) {
+    func update(flag: FeatureFlagType, newValue: Bool) {
         var existing = flagsRelay.value
-        existing[falg] = newValue
+        existing[flag] = newValue
         flagsRelay.accept(existing)
     }
 }
