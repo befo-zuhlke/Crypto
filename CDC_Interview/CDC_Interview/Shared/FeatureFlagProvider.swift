@@ -10,7 +10,7 @@ enum FeatureFlagType {
 class FeatureFlagProvider {
     let flagsRelay: BehaviorRelay<[FeatureFlagType: Bool]> = .init(
         value: [
-            .supportEUR: true
+            .supportEUR: false
         ]
     )
     
