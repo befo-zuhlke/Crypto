@@ -121,3 +121,37 @@ extension ListViewController {
         }).map { _ in }
     }
 }
+
+extension ListViewController {
+    class ViewModel {
+        var bag: DisposeBag = .init()
+        // input
+        var searchTerm: BehaviorRelay<String?> = .init(value: nil)
+        // output
+        var items: BehaviorRelay<[InstrumentPriceCell.ViewModel]> = .init(value: [])
+
+        private var fetcher: Fetching
+
+        init(dependency: Dependency = Dependency.shared) {
+            fetcher = dependency.resolve(Fetching.self)!
+
+            let fetchItems = fetchItems(fetcher: fetcher)
+
+            searchTerm
+                .filter { $0 != nil }
+                .flatMapLatest(fetchItems)
+                .bind(to: items)
+                .disposed(by: bag)
+        }
+    }
+
+    static func fetchItems(fetcher: Fetching) -> (_ searchTerm: String?) -> Observable<[InstrumentPriceCell.ViewModel]> {
+        { searchTerm in
+            fetcher.fetchItems(searchText: searchTerm)
+        }
+    }
+}
+
+protocol Fetching {
+    func fetchItems(searchText: String?) -> Observable<[InstrumentPriceCell.ViewModel]>
+}

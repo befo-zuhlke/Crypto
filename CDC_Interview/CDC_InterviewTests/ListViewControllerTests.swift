@@ -58,6 +58,32 @@ final class ListViewControllerTests: XCTestCase {
             .next(10, [InstrumentPriceCell.ViewModel(usdPrice: USDPrice.init(id: 1, name: "a", usd: 1, tags: [.deposit]))]),
         ])
     }
+
+    func testSearchCallsFetchItems() {
+        let bag = DisposeBag()
+        let scheduler = TestScheduler(initialClock: 0)
+
+        let dep = Dependency()
+
+        let expectedItems: [InstrumentPriceCell.ViewModel] = [
+            .init(usdPrice: USDPrice.init(id: 4, name: "abc", usd: 2, tags: [.withdrawal])),
+            .init(usdPrice: USDPrice.init(id: 5, name: "123", usd: 5, tags: [.deposit])),
+            .init(usdPrice: USDPrice.init(id: 6, name: "1bc", usd: 6, tags: [.withdrawal]))
+        ]
+        let mock = MockFetcher(items: expectedItems)
+        dep.register(Fetching.self) { _ in
+            mock
+        }
+
+        let sut = ListViewController.ViewModel(dependency: dep)
+        let itemsObserver = scheduler.createObserver([InstrumentPriceCell.ViewModel].self)
+        sut.items.bind(to: itemsObserver).disposed(by: bag)
+
+        sut.searchTerm.accept("a")
+
+        XCTAssertEqual(mock.fetchItemsCallCount, 1)
+        XCTAssertEqual(itemsObserver.events.dropFirst(), [.next(0, expectedItems)])
+    }
 }
 
 class MockUSDPriceUseCase: USDPriceUseCase {
@@ -71,5 +97,24 @@ class MockAllPriceUseCase: AllPriceUseCase {
     var stubbedFetchItemsResult: Observable<AllPrice.Price>!
     override func fetchItems() -> Observable<AllPrice.Price> {
         return stubbedFetchItemsResult
+    }
+}
+
+class MockFetcher: Fetching {
+
+    var items: [InstrumentPriceCell.ViewModel]
+    var fetchItemsCallCount = 0
+
+    init(items: [InstrumentPriceCell.ViewModel]) {
+        self.items = items
+    }
+
+    func fetchItems(searchText: String?) -> Observable<[InstrumentPriceCell.ViewModel]> {
+        fetchItemsCallCount += 1
+        return Single<[InstrumentPriceCell.ViewModel]>.create { [unowned self] in
+            $0(.success(items))
+            return Disposables.create {}
+        }
+        .asObservable()
     }
 }
