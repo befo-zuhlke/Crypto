@@ -1,0 +1,31 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "BTC",
+            "price": {
+                "usd": 150.12345678,
+                "eur": 135.12345678
+            },
+            "tags": ["withdrawal", "deposit"]
+        },
+        {
+            "id": 2,
+            "name": "ETH",
+            "price": {
+                "usd": 150.12345678,
+                "eur": 135.12345678
+            },
+            "tags": ["deposit"]
+        },
+        {
+            "id": 3,
+            "name": "SOL",
+            "price": {
+                "usd": 150.12345678,
+                "eur": 135.12345678
+            },
+            "tags": ["deposit"]
+        }
+    ]
+}
