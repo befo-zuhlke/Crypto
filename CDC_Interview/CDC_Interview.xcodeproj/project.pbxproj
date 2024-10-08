@@ -29,6 +29,8 @@
 		1FBEC5A32C940DE300732A9C /* ListViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBEC5A22C940DE300732A9C /* ListViewControllerTests.swift */; };
 		1FBEC5AA2C940E4400732A9C /* RxTest in Frameworks */ = {isa = PBXBuildFile; productRef = 1FBEC5A92C940E4400732A9C /* RxTest */; };
 		92363E802CB5A3860097FAB7 /* Fakery in Frameworks */ = {isa = PBXBuildFile; productRef = 92363E7F2CB5A3860097FAB7 /* Fakery */; };
+		92363E822CB5ACE90097FAB7 /* Test+Fakes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E812CB5ACD40097FAB7 /* Test+Fakes.swift */; };
+		92363E842CB5AD800097FAB7 /* Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E832CB5AD710097FAB7 /* Fetching.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +65,8 @@
 		1F9670412C939F76004DB8FD /* USDItemDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USDItemDetailsViewController.swift; sourceTree = "<group>"; };
 		1FBEC5A02C940DE300732A9C /* CDC_InterviewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CDC_InterviewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FBEC5A22C940DE300732A9C /* ListViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewControllerTests.swift; sourceTree = "<group>"; };
+		92363E812CB5ACD40097FAB7 /* Test+Fakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+Fakes.swift"; sourceTree = "<group>"; };
+		92363E832CB5AD710097FAB7 /* Fetching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetching.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,6 +169,7 @@
 		1F96703D2C939E4D004DB8FD /* ListView */ = {
 			isa = PBXGroup;
 			children = (
+				92363E832CB5AD710097FAB7 /* Fetching.swift */,
 				1F96700D2C91A7E1004DB8FD /* ListViewController.swift */,
 				1F96702A2C91C704004DB8FD /* InstrumentPriceCell.swift */,
 			);
@@ -182,6 +187,7 @@
 		1FBEC5A12C940DE300732A9C /* CDC_InterviewTests */ = {
 			isa = PBXGroup;
 			children = (
+				92363E812CB5ACD40097FAB7 /* Test+Fakes.swift */,
 				1FBEC5A22C940DE300732A9C /* ListViewControllerTests.swift */,
 			);
 			path = CDC_InterviewTests;
@@ -304,6 +310,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F9670332C92C0C3004DB8FD /* AllPriceUseCase.swift in Sources */,
+				92363E842CB5AD800097FAB7 /* Fetching.swift in Sources */,
 				1F96700E2C91A7E1004DB8FD /* ListViewController.swift in Sources */,
 				1F96700A2C91A7E1004DB8FD /* AppDelegate.swift in Sources */,
 				1F96700C2C91A7E1004DB8FD /* SceneDelegate.swift in Sources */,
@@ -321,6 +328,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92363E822CB5ACE90097FAB7 /* Test+Fakes.swift in Sources */,
 				1FBEC5A32C940DE300732A9C /* ListViewControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

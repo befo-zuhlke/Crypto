@@ -66,10 +66,11 @@ final class ListViewControllerTests: XCTestCase {
         let dep = Dependency()
 
         let expectedItems: [InstrumentPriceCell.ViewModel] = [
-            .init(usdPrice: USDPrice.init(id: 4, name: "abc", usd: 2, tags: [.withdrawal])),
-            .init(usdPrice: USDPrice.init(id: 5, name: "123", usd: 5, tags: [.deposit])),
-            .init(usdPrice: USDPrice.init(id: 6, name: "1bc", usd: 6, tags: [.withdrawal]))
+            .fake,
+            .fake,
+            .fake
         ]
+
         let mock = MockFetcher(items: expectedItems)
         dep.register(Fetching.self) { _ in
             mock
@@ -118,3 +119,5 @@ class MockFetcher: Fetching {
         .asObservable()
     }
 }
+
+

@@ -151,7 +151,3 @@ extension ListViewController {
         }
     }
 }
-
-protocol Fetching {
-    func fetchItems(searchText: String?) -> Observable<[InstrumentPriceCell.ViewModel]>
-}
