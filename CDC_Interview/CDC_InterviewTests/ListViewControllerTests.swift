@@ -4,7 +4,7 @@ import RxTest
 import RxSwift
 @testable import CDC_Interview
 
-final class CDC_InterviewTests: XCTestCase {
+final class ListViewControllerTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -19,18 +19,14 @@ final class CDC_InterviewTests: XCTestCase {
         let scheduler = TestScheduler(initialClock: 0)
 
         let dep = Dependency()
-        dep.register(USDPriceUseCase.self) { _ in
-            let mock = MockUSDPriceUseCase()
-            mock.stubbedFetchItemsResult = scheduler.createColdObservable([
-                .next(0, []),
-                .next(10, [USDPrice.init(id: 1, name: "a", usd: 1, tags: [.deposit])])
-            ]).asObservable()
-            
-            return mock
-        }
-        
+
         dep.register(AllPriceUseCase.self) { _ in
-            MockAllPriceUseCase()
+            let mock = MockAllPriceUseCase()
+            mock.stubbedFetchItemsResult = scheduler.createColdObservable(([
+                .next(0, AllPrice.Price(id: 0, name: "", price: .init(usd: 0.0, eur: 0), tags: []))
+            ])).asObservable()
+
+            return mock
         }
         
         dep.register(USDPriceUseCase.self) { _ in
@@ -49,12 +45,14 @@ final class CDC_InterviewTests: XCTestCase {
             return provider
         }
         
-        let vc = ListViewController()
-        
+        let vc = ListViewController(dependency: dep)
+
         let itemsObserver = scheduler.createObserver([InstrumentPriceCell.ViewModel].self)
         vc.itemsObservable.distinctUntilChanged().bind(to: itemsObserver).disposed(by: disposeBag)
         vc.fetchItems(searchText: nil).subscribe().disposed(by: disposeBag)
-                
+
+        scheduler.start()
+
         XCTAssertEqual(itemsObserver.events, [
             .next(0, []),
             .next(10, [InstrumentPriceCell.ViewModel(usdPrice: USDPrice.init(id: 1, name: "a", usd: 1, tags: [.deposit]))]),

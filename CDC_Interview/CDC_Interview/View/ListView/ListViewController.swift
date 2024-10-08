@@ -89,6 +89,7 @@ class ListViewController: UIViewController {
             self.fetchItems(searchText: searchText).asDriver(onErrorDriveWith: .empty())
         }
         .drive()
+        .disposed(by: disposeBag)
     }
 }
 
@@ -96,10 +97,10 @@ extension ListViewController {
     func fetchItems(searchText: String?) -> Observable<Void> {
         Observable.combineLatest(
             featureFlagProvider.observeFlagValue(flag: .supportEUR),
-            usdUseCase.fetchItems()
-            // allUseCase.fetchItems()
+            usdUseCase.fetchItems(),
+             allUseCase.fetchItems()
         )
-        .do(onNext: { shouldUseNewAPI, usdResult in
+        .do(onNext: { shouldUseNewAPI, usdResult, _ in
             guard shouldUseNewAPI else {
                 let viewModels = usdResult
                     .filter {
