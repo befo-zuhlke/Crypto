@@ -28,6 +28,7 @@
 		1F9670422C939F76004DB8FD /* USDItemDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F9670412C939F76004DB8FD /* USDItemDetailsViewController.swift */; };
 		1FBEC5A32C940DE300732A9C /* ListViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBEC5A22C940DE300732A9C /* ListViewControllerTests.swift */; };
 		1FBEC5AA2C940E4400732A9C /* RxTest in Frameworks */ = {isa = PBXBuildFile; productRef = 1FBEC5A92C940E4400732A9C /* RxTest */; };
+		92363E802CB5A3860097FAB7 /* Fakery in Frameworks */ = {isa = PBXBuildFile; productRef = 92363E7F2CB5A3860097FAB7 /* Fakery */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92363E802CB5A3860097FAB7 /* Fakery in Frameworks */,
 				1FBEC5AA2C940E4400732A9C /* RxTest in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -226,6 +228,7 @@
 			name = CDC_InterviewTests;
 			packageProductDependencies = (
 				1FBEC5A92C940E4400732A9C /* RxTest */,
+				92363E7F2CB5A3860097FAB7 /* Fakery */,
 			);
 			productName = CDC_InterviewTests;
 			productReference = 1FBEC5A02C940DE300732A9C /* CDC_InterviewTests.xctest */;
@@ -261,6 +264,7 @@
 			mainGroup = 1F966FFD2C91A7E1004DB8FD;
 			packageReferences = (
 				1F96701F2C91A8AC004DB8FD /* XCRemoteSwiftPackageReference "RxSwift" */,
+				92363E7E2CB5A3860097FAB7 /* XCRemoteSwiftPackageReference "Fakery" */,
 			);
 			productRefGroup = 1F9670072C91A7E1004DB8FD /* Products */;
 			projectDirPath = "";
@@ -609,6 +613,14 @@
 				minimumVersion = 6.7.1;
 			};
 		};
+		92363E7E2CB5A3860097FAB7 /* XCRemoteSwiftPackageReference "Fakery" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vadymmarkov/Fakery";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -631,6 +643,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1F96701F2C91A8AC004DB8FD /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxTest;
+		};
+		92363E7F2CB5A3860097FAB7 /* Fakery */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92363E7E2CB5A3860097FAB7 /* XCRemoteSwiftPackageReference "Fakery" */;
+			productName = Fakery;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
