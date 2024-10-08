@@ -47,7 +47,7 @@ class USDItemDetailsViewController: UIViewController {
             $0?.tags.map { $0.rawValue } ?? []
         }
         
-        self.warningObservable = featureFlagProvider.observeFlagValue(falg: .supportEUR)
+        self.warningObservable = featureFlagProvider.observeFlagValue(flag: .supportEUR)
             .map { isEURSupported in
                 if isEURSupported {
                     return "EUR is supported, please select item from list view again"

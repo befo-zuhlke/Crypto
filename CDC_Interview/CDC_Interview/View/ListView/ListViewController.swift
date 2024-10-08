@@ -95,7 +95,7 @@ class ListViewController: UIViewController {
 extension ListViewController {
     func fetchItems(searchText: String?) -> Observable<Void> {
         Observable.combineLatest(
-            featureFlagProvider.observeFlagValue(falg: .supportEUR),
+            featureFlagProvider.observeFlagValue(flag: .supportEUR),
             usdUseCase.fetchItems()
             // allUseCase.fetchItems()
         )

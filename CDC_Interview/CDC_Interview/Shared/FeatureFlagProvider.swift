@@ -14,9 +14,9 @@ class FeatureFlagProvider {
         ]
     )
     
-    func observeFlagValue(falg: FeatureFlagType) -> Observable<Bool> {
+    func observeFlagValue(flag: FeatureFlagType) -> Observable<Bool> {
         flagsRelay.map {
-            $0[falg] ?? false
+            $0[flag] ?? false
         }
     }
     
