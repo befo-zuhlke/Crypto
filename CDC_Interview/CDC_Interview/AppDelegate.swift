@@ -3,6 +3,8 @@ import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    let features = FeatureFlagProvider()
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
@@ -14,8 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return AllPriceUseCase()
         }
         
-        Dependency.shared.register(FeatureFlagProvider.self) { resolver in
-            return FeatureFlagProvider()
+        Dependency.shared.register(FeatureFlagProvider.self) { [unowned self] resolver in
+            return features
         }
 
         Dependency.shared.register(Fetching.self) { resolver in
