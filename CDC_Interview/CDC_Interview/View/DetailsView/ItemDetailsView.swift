@@ -19,15 +19,27 @@ struct ItemDetailView: View {
     }
 
     var body: some View {
-        VStack {
-            Text(vm.warning)
-            Text(vm.title)
-            Text(vm.price)
+        VStack(alignment: .leading) {
+            Text(vm.warning).font(.title).foregroundStyle(.red)
+                .multilineTextAlignment(.center)
+                .padding(.bottom, 12)
+            Text(vm.price).font(.title2)
+                .padding(.bottom, 12)
             ForEach(vm.tags, id: \.self) { tag in
                 Text(tag)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+
+        .navigationTitle(vm.title)
+
+        Spacer()
     }
+}
+
+#Preview {
+    ItemDetailView(item: AnyPricable(USDPrice(id: 1, name: "ufffff", usd: 1.0, tags: [.deposit])))
 }
 
 extension ItemDetailView {
