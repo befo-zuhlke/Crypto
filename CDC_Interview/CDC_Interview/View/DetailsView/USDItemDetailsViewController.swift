@@ -147,16 +147,37 @@ extension ItemDetailView {
         ) {
 
             let allpriceUseCase = dependency.resolve(AllPriceUseCase.self)!
+            let featureFlags = dependency.resolve(FeatureFlagProvider.self)!
 
-            allpriceUseCase.fetchItems()
+            let foundPrice = allpriceUseCase.fetchItems()
                 .observe(on: scheduler)
                 .compactMap { $0.first { $0.id == item.id } }
-                .map { $0.prices }
+                .share()
+
+            foundPrice.publisher
+                .map(\.prices)
                 .map { $0.map { "\($0.currency): \($0.value)" }.joined(separator: "\n") }
-                .publisher
                 .eraseToAnyPublisher()
                 .replaceError(with: "")
                 .assign(to: &$price)
+
+            foundPrice.publisher
+                .map(\.name)
+                .replaceError(with: "")
+                .assign(to: &$title)
+
+            foundPrice.publisher
+                .map(\.tags)
+                .map { $0.map { $0.rawValue } }
+                .replaceError(with: [])
+                .assign(to: &$tags)
+
+            featureFlags.observeFlagValue(flag: .supportEUR).map {
+                $0 ? "EUR is supported, please select item from list view again" : nil
+            }
+            .publisher
+            .replaceError(with: nil)
+            .assign(to: &$warning)
 
         }
     }

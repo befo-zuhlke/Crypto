@@ -9,6 +9,7 @@ import Testing
 import Combine
 import Foundation
 import RxTest
+import RxSwift
 @testable import CDC_Interview
 
 
@@ -16,25 +17,27 @@ struct ItemDetailViewModelTests {
 
     @MainActor
     @Test("finds price in all price displays all prices", arguments: [
-        AllPrice.Price.PriceRecord(usd: 1.0, eur: 3.0),
-        AllPrice.Price.PriceRecord(usd: 4.6, eur: 10.2),
-        AllPrice.Price.PriceRecord(usd: 88, eur: 89)
+        AllPrice.Price.fake,
+        AllPrice.Price.fake,
+        AllPrice.Price.fake
     ])
-    func testPrice(price: AllPrice.Price.PriceRecord) throws {
+    func testPrice(price: AllPrice.Price) throws {
         let dep = Dependency()
         let scheduler = TestScheduler(initialClock: 0)
 
-        let expectedPrice = USDPrice(id: 1, name: "ABC", usd: price.usd, tags: [.deposit])
+        let expectedPrice = USDPrice(id: price.id, name: price.name, usd: price.price.usd, tags: price.tags)
         let item = AnyPricable(expectedPrice)
 
-        let allPrice = AllPrice.Price(id: 1, name: "ABC", price: .init(usd: price.usd, eur:
-                                                                        price.eur), tags: [.deposit])
+        dep.register(FeatureFlagProvider.self) { _ in
+            MockFeatureFlagProvider()
+        }
+
         dep.register(AllPriceUseCase.self) { _ in
             let mock = MockAllPriceUseCase()
             mock.stubbedFetchItemsResult = scheduler.createColdObservable([
                 .next(5, [
                     AnyPricable(AllPrice.Price.fake),
-                    AnyPricable(allPrice),
+                    AnyPricable(price),
                     AnyPricable(AllPrice.Price.fake)
                 ])
             ]).asObservable()
@@ -45,7 +48,83 @@ struct ItemDetailViewModelTests {
 
         scheduler.start()
 
-        #expect(sut.price == "usd: \(price.usd)\neur: \(price.eur)")
+        #expect(sut.price == "usd: \(price.price.usd)\neur: \(price.price.eur)")
+        #expect(sut.title == price.name)
+        #expect(sut.tags == price.tags.map { $0.rawValue } )
+    }
+
+    @MainActor
+    @Test("shows warning label")
+    func testWarning() throws {
+        let dep = Dependency()
+        let scheduler = TestScheduler(initialClock: 0)
+
+        let expectedPrice = USDPrice.fake
+        let item = AnyPricable(expectedPrice)
+
+        dep.register(FeatureFlagProvider.self) { _ in
+            let mock = MockFeatureFlagProvider()
+            mock.result = true
+            return mock
+        }
+
+        dep.register(AllPriceUseCase.self) { _ in
+            let mock = MockAllPriceUseCase()
+            mock.stubbedFetchItemsResult = scheduler.createColdObservable([
+                .next(5, [
+                    AnyPricable(expectedPrice)
+                ])
+            ]).asObservable()
+            return mock
+        }
+
+        let sut = ItemDetailView.ViewModel(dependency: dep, item: item, scheduler: scheduler)
+
+        scheduler.start()
+
+        #expect(sut.warning == "EUR is supported, please select item from list view again")
+    }
+
+    @MainActor
+    @Test("hides warning label")
+    func hidesWarning() throws {
+        let dep = Dependency()
+        let scheduler = TestScheduler(initialClock: 0)
+
+        let expectedPrice = USDPrice.fake
+        let item = AnyPricable(expectedPrice)
+
+        dep.register(FeatureFlagProvider.self) { _ in
+            let mock = MockFeatureFlagProvider()
+            mock.result = false
+            return mock
+        }
+
+        dep.register(AllPriceUseCase.self) { _ in
+            let mock = MockAllPriceUseCase()
+            mock.stubbedFetchItemsResult = scheduler.createColdObservable([
+                .next(5, [
+                    AnyPricable(expectedPrice)
+                ])
+            ]).asObservable()
+            return mock
+        }
+
+        let sut = ItemDetailView.ViewModel(dependency: dep, item: item, scheduler: scheduler)
+
+        scheduler.start()
+
+        #expect(sut.warning == nil)
+    }
+}
+
+class MockFeatureFlagProvider: FeatureFlagProvider {
+
+    var result: Bool?
+    override func observeFlagValue(flag: FeatureFlagType) -> Observable<Bool> {
+        flagsRelay.map { _ in
+            self.result ?? false
+        }
     }
 }
 
