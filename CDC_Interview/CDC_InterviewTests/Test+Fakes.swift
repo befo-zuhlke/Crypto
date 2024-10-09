@@ -11,15 +11,25 @@ import XCTest
 
 let faker = Faker()
 
-extension InstrumentPriceCell.ViewModel {
-    static var fake: InstrumentPriceCell.ViewModel {
-        let x = InstrumentPriceCell.ViewModel()
-        x.price = .init(USDPrice(
+extension USDPrice {
+    static var fake: USDPrice {
+        USDPrice(
             id: faker.number.randomInt(),
             name: faker.lorem.word(),
             usd: Decimal(faker.number.randomDouble()),
-            tags: [.deposit])
+            tags: .fake
         )
-        return x
+    }
+}
+
+extension Tag {
+    static var fake: Tag {
+        Tag.allCases.randomElement() ?? .deposit
+    }
+}
+
+extension Sequence where Element == Tag {
+    static var fake: [Tag] {
+        (0..<Tag.allCases.count).map { _ in Tag.fake }
     }
 }

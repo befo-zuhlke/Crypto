@@ -17,7 +17,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Dependency.shared.register(FeatureFlagProvider.self) { resolver in
             return FeatureFlagProvider()
         }
-        
+
+        Dependency.shared.register(Fetching.self) { resolver in
+            return ItemPriceFetcher()
+        }
+
         return true
     }
 

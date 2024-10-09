@@ -5,31 +5,19 @@ import RxCocoa
 
 class ListViewController: UIViewController {
 
-    private var cellId = "InstrumentPriceCell"
+    private let cellId = "InstrumentPriceCell"
     private let tableView = UITableView()
     
     private let searchBar = UISearchBar()
     private let disposeBag = DisposeBag()
-    
-    var itemsObservable: Observable<[AnyPricable]> {
-        itemsRelay.asObservable()
-    }
-    
-    private var itemsRelay: BehaviorRelay<[AnyPricable]> = .init(value: [])
-    private let usdUseCase: USDPriceUseCase
-    private let allUseCase: AllPriceUseCase
-    private let featureFlagProvider: FeatureFlagProvider
 
     @Observed private var navigateWithPrice: AnyPricable?
+    private let vm = ViewModel()
 
     init(dependency: Dependency = Dependency.shared) {
-        self.usdUseCase = dependency.resolve(USDPriceUseCase.self)!
-        allUseCase = dependency.resolve(AllPriceUseCase.self)!
-        self.featureFlagProvider = dependency.resolve(FeatureFlagProvider.self)!
-        
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -67,7 +55,12 @@ class ListViewController: UIViewController {
     }
 
     private func bindViewModel() {
-        itemsObservable
+        searchBar.searchTextField.rx
+            .text
+            .bind(to: vm.searchTerm)
+            .disposed(by: disposeBag)
+
+        vm.items
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .bind(to: tableView.rx.items(cellIdentifier: cellId))(Self.configureCell)
             .disposed(by: disposeBag)
@@ -92,13 +85,6 @@ class ListViewController: UIViewController {
                 }
             }
             .disposed(by: disposeBag)
-
-        // Fetch the items from the ViewModel
-        searchBar.searchTextField.rx.text.asDriver().flatMapLatest { searchText in
-            self.fetchItems(searchText: searchText).asDriver(onErrorDriveWith: .empty())
-        }
-        .drive()
-        .disposed(by: disposeBag)
     }
 
     static func configureCell(index: Int, price: AnyPricable, cell: UITableViewCell) {
@@ -110,41 +96,12 @@ class ListViewController: UIViewController {
 }
 
 extension ListViewController {
-    func fetchItems(searchText: String?) -> Observable<Void> {
-        Observable.combineLatest(
-            featureFlagProvider.observeFlagValue(flag: .supportEUR),
-            usdUseCase.fetchItems()
-//            allUseCase.fetchItems()
-        )
-        .do(onNext: { shouldUseNewAPI, usdResult in
-            guard shouldUseNewAPI else {
-                let searchedPrice = usdResult
-                    .filter {
-                        if let searchText, searchText.isEmpty == false {
-                            return $0.name.contains(searchText)
-                        }
-                        return true
-                    }
-
-                self.itemsRelay.accept(searchedPrice)
-                return
-            }
-            
-            // TODO: need to handle new api
-            
-        }, onSubscribe: {
-            self.itemsRelay.accept([])
-        }).map { _ in }
-    }
-}
-
-extension ListViewController {
     class ViewModel {
         var bag: DisposeBag = .init()
         // input
         var searchTerm: BehaviorRelay<String?> = .init(value: nil)
         // output
-        var items: BehaviorRelay<[InstrumentPriceCell.ViewModel]> = .init(value: [])
+        var items: BehaviorRelay<[AnyPricable]> = .init(value: [])
 
         private var fetcher: Fetching
 
@@ -154,16 +111,47 @@ extension ListViewController {
             let fetchItems = fetchItems(fetcher: fetcher)
 
             searchTerm
-                .filter { $0 != nil }
                 .flatMapLatest(fetchItems)
-                .bind(to: items)
+                .asDriver(onErrorDriveWith: .empty())
+                .drive(items)
                 .disposed(by: bag)
         }
     }
 
-    static func fetchItems(fetcher: Fetching) -> (_ searchTerm: String?) -> Observable<[InstrumentPriceCell.ViewModel]> {
+    static func fetchItems(fetcher: Fetching) -> (_ searchTerm: String?) -> Observable<[AnyPricable]> {
         { searchTerm in
             fetcher.fetchItems(searchText: searchTerm)
+        }
+    }
+}
+
+class ItemPriceFetcher: Fetching {
+
+    private let usdUseCase: USDPriceUseCase
+    private let allUseCase: AllPriceUseCase
+    private let featureFlagProvider: FeatureFlagProvider
+
+    init(dependency: Dependency = Dependency.shared) {
+        self.usdUseCase = dependency.resolve(USDPriceUseCase.self)!
+        allUseCase = dependency.resolve(AllPriceUseCase.self)!
+        self.featureFlagProvider = dependency.resolve(FeatureFlagProvider.self)!
+    }
+
+    func fetchItems(searchText: String?) -> Observable<[AnyPricable]> {
+        Observable.combineLatest(
+            featureFlagProvider.observeFlagValue(flag: .supportEUR),
+            usdUseCase.fetchItems()
+//            allUseCase.fetchItems()
+        ).map { shouldUseNewAPI, usdResult in
+            let searchedPrice = usdResult
+                .filter {
+                    if let searchText, searchText.isEmpty == false {
+                        return $0.name.contains(searchText)
+                    }
+                    return true
+                }
+
+            return searchedPrice
         }
     }
 }

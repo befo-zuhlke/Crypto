@@ -5,6 +5,8 @@ enum Tag: String, Decodable {
     case withdrawal = "withdrawal"
 }
 
+extension Tag: CaseIterable {}
+
 struct USDPrice: Decodable {
     var id: Int
     let name: String

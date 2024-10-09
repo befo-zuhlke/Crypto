@@ -8,5 +8,5 @@
 import RxSwift
 
 protocol Fetching {
-    func fetchItems(searchText: String?) -> Observable<[InstrumentPriceCell.ViewModel]>
+    func fetchItems(searchText: String?) -> Observable<[AnyPricable]>
 }
