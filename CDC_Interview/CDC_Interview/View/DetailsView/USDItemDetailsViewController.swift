@@ -26,7 +26,7 @@ class USDItemDetailsViewController: UIViewController {
         let featureFlagProvider = Dependency.shared.resolve(FeatureFlagProvider.self)!
         self.priceId = priceId
         
-        let fetchedObservable: Observable<USDPrice?> = usdUseCase.fetchItems()
+        let fetchedObservable: Observable<Pricable?> = usdUseCase.fetchItems()
             .observe(on: MainScheduler.instance)
             .map { items in
                 return items.first { $0.id == priceId }
@@ -37,10 +37,7 @@ class USDItemDetailsViewController: UIViewController {
         }
         
         self.priceObservable = fetchedObservable.map {
-            guard let usd = $0?.usd else {
-                return "Price: $-"
-            }
-            return "Price: $\(usd)"
+            $0?.prices.map { "Price: $\($0.currency) - \($0.value)" }.joined(separator: "\n") ?? "Price: $-"
         }
         
         self.tagsObservable = fetchedObservable.map {

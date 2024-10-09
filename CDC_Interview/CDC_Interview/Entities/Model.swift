@@ -6,7 +6,7 @@ enum Tag: String, Decodable {
 }
 
 struct USDPrice: Decodable {
-    let id: Int
+    var id: Int
     let name: String
     let usd: Decimal
     let tags: [Tag] 
@@ -18,18 +18,45 @@ extension USDPrice: Equatable {
     }
 }
 
-
 struct AllPrice: Decodable {
+    let data: Price
+
     struct Price: Decodable {
-        struct PriceRecrd: Decodable { 
+        let id: Int
+        let name: String
+        let price: PriceRecord
+        let tags: [Tag]
+
+        struct PriceRecord: Decodable {
             let usd: Decimal
             let eur: Decimal
         }
-        
-        let id: Int
-        let name: String
-        let price: PriceRecrd
-        let tags: [Tag]
     }
-    let data: Price
+}
+
+extension USDPrice: Pricable {
+    var prices: [Price] {
+        [.init(value: usd, currency: "usd")]
+    }
+}
+
+extension AllPrice.Price: Pricable {
+    var prices: [Price] {
+        [
+            .init(value: price.usd, currency: "usd"),
+            .init(value: price.eur, currency: "eur")
+        ]
+    }
+}
+
+protocol Pricable {
+    var id: Int { get }
+    var name: String { get }
+    var prices: [Price] { get }
+    var tags: [Tag] { get }
+}
+
+struct Price {
+    let value: Decimal
+    let currency: String
 }

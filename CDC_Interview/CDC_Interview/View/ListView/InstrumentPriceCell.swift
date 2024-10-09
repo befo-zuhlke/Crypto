@@ -17,7 +17,9 @@ class InstrumentPriceCell: UITableViewCell {
 
     let viewModel = ViewModel()
 
-    func configure(viewModel: ViewModel) {
+    func configure(price: Pricable) {
+        viewModel.price = price
+
         viewModel.title$.asDriver(onErrorDriveWith: .empty())
             .drive(textLabel!.rx.text)
             .disposed(by: disposeBag)
@@ -33,7 +35,7 @@ class InstrumentPriceCell: UITableViewCell {
         // only set viewed after 3 seconds
         Observable<Void>.just(())
             .delay(.seconds(3), scheduler: MainScheduler.instance)
-            .subscribe(onNext: {
+            .subscribe(onNext: { [unowned self] in
                 viewModel.hasViewed$.accept(true)
             })
             .disposed(by: disposeBag)
@@ -43,12 +45,12 @@ class InstrumentPriceCell: UITableViewCell {
 extension InstrumentPriceCell {
     class ViewModel: Equatable {
         static func == (lhs: InstrumentPriceCell.ViewModel, rhs: InstrumentPriceCell.ViewModel) -> Bool {
-            lhs.usdPrice?.id == rhs.usdPrice?.id
+            lhs.price?.id == rhs.price?.id
         }
 
         var bag: DisposeBag = .init()
 
-        @Observed var usdPrice: USDPrice?
+        @Observed var price: Pricable?
 
         let title$: BehaviorRelay<String> = .init(value: "")
         let description$: BehaviorRelay<String> = .init(value: "")
@@ -56,13 +58,14 @@ extension InstrumentPriceCell {
         let hasViewed$: BehaviorRelay<Bool> = .init(value: false)
 
         init() {
-            $usdPrice
+            $price
                 .map { $0?.name ?? "" }
                 .bind(to: title$)
                 .disposed(by: bag)
 
-            $usdPrice
-                .compactMap { "\($0?.usd ?? 0)" }
+            $price
+                .compactMap { $0?.prices }
+                .map(Self.toUSDPrice)
                 .bind(to: description$)
                 .disposed(by: bag)
 
@@ -70,6 +73,10 @@ extension InstrumentPriceCell {
                 .map { $0 ? .white : .lightGray }
                 .bind(to: backgroundColor$)
                 .disposed(by: bag)
+        }
+
+        static func toUSDPrice(prices: [Price]) -> String {
+            "\(prices.first { $0.currency == "usd" }?.value ?? 0)"
         }
     }
 }

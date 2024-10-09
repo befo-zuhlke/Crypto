@@ -56,7 +56,7 @@ final class ListViewControllerTests: XCTestCase {
         let x = itemsObserver.events
             .map {
                 Recorded(time: $0.time, value: $0.value.map {
-                    val in val.map { x in x.usdPrice }
+                    val in val.map { x in x.prices }
                 })
             }
 

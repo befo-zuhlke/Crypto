@@ -4,21 +4,23 @@ import RxSwift
 import RxCocoa
 
 class ListViewController: UIViewController {
+
+    private var cellId = "InstrumentPriceCell"
     private let tableView = UITableView()
     
     private let searchBar = UISearchBar()
     private let disposeBag = DisposeBag()
     
-    var itemsObservable: Observable<[InstrumentPriceCell.ViewModel]> {
+    var itemsObservable: Observable<[Pricable]> {
         itemsRelay.asObservable()
     }
     
-    private var itemsRelay: BehaviorRelay<[InstrumentPriceCell.ViewModel]> = .init(value: [])
+    private var itemsRelay: BehaviorRelay<[Pricable]> = .init(value: [])
     private let usdUseCase: USDPriceUseCase
     private let allUseCase: AllPriceUseCase
     private let featureFlagProvider: FeatureFlagProvider
 
-    @Observed private var navigateWithPrice: USDPrice!
+    @Observed private var navigateWithPrice: Pricable!
 
     init(dependency: Dependency = Dependency.shared) {
         self.usdUseCase = dependency.resolve(USDPriceUseCase.self)!
@@ -54,7 +56,7 @@ class ListViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         
-        tableView.register(InstrumentPriceCell.self, forCellReuseIdentifier: "InstrumentPriceCell")
+        tableView.register(InstrumentPriceCell.self, forCellReuseIdentifier: cellId)
         tableView.estimatedRowHeight = 80
     }
     
@@ -63,33 +65,26 @@ class ListViewController: UIViewController {
         
         self.tableView.contentInset = UIEdgeInsets(top: searchBar.frame.height,left: 0,bottom: 0,right: 0);
     }
-    
+
     private func bindViewModel() {
         itemsObservable
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
-            .bind(to: tableView.rx.items(cellIdentifier: "InstrumentPriceCell")) { index, vm, cell in
-
-                guard let singleCell = cell as? InstrumentPriceCell else {
-                    return
-                }
-                singleCell.configure(viewModel: vm)
-            }
+            .bind(to: tableView.rx.items(cellIdentifier: cellId))(Self.configureCell)
             .disposed(by: disposeBag)
 
-        tableView.rx.itemSelected
-            .withLatestFrom(itemsObservable) { ($0, $1) }
-            .compactMap { indexPath, items in
-                items[indexPath.row].usdPrice
-            }
+        tableView.rx.modelSelected(Pricable.self)
             .bind(to: $navigateWithPrice)
             .disposed(by: disposeBag)
 
         $navigateWithPrice
-            .compactMap { $0 }
+            .compactMap { $0?.id }
             .subscribe {
                 switch $0 {
-                case let .next(price):
-                    self.navigationController?.pushViewController(USDItemDetailsViewController(priceId: price.id), animated: true)
+                case let .next(priceId):
+                    self.navigationController?.pushViewController(
+                        USDItemDetailsViewController(priceId: priceId),
+                        animated: true
+                    )
                 case let .error(e):
                     print("navigation error: \(e)")
                 case .completed:
@@ -105,6 +100,13 @@ class ListViewController: UIViewController {
         .drive()
         .disposed(by: disposeBag)
     }
+
+    static func configureCell(index: Int, price: Pricable, cell: UITableViewCell) {
+        guard let singleCell = cell as? InstrumentPriceCell else {
+            return
+        }
+        singleCell.configure(price: price)
+    }
 }
 
 extension ListViewController {
@@ -116,19 +118,15 @@ extension ListViewController {
         )
         .do(onNext: { shouldUseNewAPI, usdResult in
             guard shouldUseNewAPI else {
-                let viewModels = usdResult
+                let searchedPrice = usdResult
                     .filter {
                         if let searchText, searchText.isEmpty == false {
-                            return  $0.name.contains(searchText)
+                            return $0.name.contains(searchText)
                         }
                         return true
                     }
-                    .map {
-                        let x = InstrumentPriceCell.ViewModel()
-                        x.usdPrice = $0
-                        return x
-                    }
-                self.itemsRelay.accept(viewModels)
+
+                self.itemsRelay.accept(searchedPrice)
                 return
             }
             
