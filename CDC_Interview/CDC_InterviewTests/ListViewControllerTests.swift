@@ -31,7 +31,7 @@ final class ListViewControllerTests: XCTestCase {
             mock
         }
 
-        let sut = ListViewController.ViewModel(dependency: dep)
+        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
 
@@ -39,7 +39,7 @@ final class ListViewControllerTests: XCTestCase {
 
         XCTAssertEqual(mock.fetchItemsCallCount, 1)
         XCTAssertEqual(mock.searchTerm, nil)
-        XCTAssertEqual(itemsObserver.events, [.next(0, expectedItems)])
+        XCTAssertEqual(itemsObserver.events.dropFirst(), [.next(1, expectedItems)])
     }
 
     func testSearchIgnoresDuplicates() {
@@ -59,7 +59,7 @@ final class ListViewControllerTests: XCTestCase {
             mock
         }
 
-        let sut = ListViewController.ViewModel(dependency: dep)
+        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
 
@@ -72,10 +72,44 @@ final class ListViewControllerTests: XCTestCase {
 
         scheduler.start()
 
-        XCTAssertEqual(mock.fetchItemsCallCount, 2)
+        XCTAssertEqual(mock.fetchItemsCallCount, 1)
         XCTAssertEqual(mock.searchTerm, searchTerm)
-        XCTAssertEqual(itemsObserver.events.dropFirst(), [.next(0, expectedItems)])
+        XCTAssertEqual(itemsObserver.events.dropFirst(), [.next(1, expectedItems)])
     }
+
+    func testSearchDebounces() {
+        let bag = DisposeBag()
+        let scheduler = TestScheduler(initialClock: 0)
+
+        let dep = Dependency()
+
+        let expectedItems: [AnyPricable] = [
+            AnyPricable(USDPrice.fake),
+            AnyPricable(USDPrice.fake)
+        ]
+
+        let mock = MockFetcher(items: expectedItems)
+        dep.register(Fetching.self) { _ in
+            mock
+        }
+
+        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
+        let itemsObserver = scheduler.createObserver([AnyPricable].self)
+        sut.items.bind(to: itemsObserver).disposed(by: bag)
+
+        sut.searchTerm.accept("h")
+        sut.searchTerm.accept("he")
+        sut.searchTerm.accept("hel")
+        sut.searchTerm.accept("hell")
+        sut.searchTerm.accept("hello")
+
+        scheduler.start()
+
+        XCTAssertEqual(mock.fetchItemsCallCount, 1)
+        XCTAssertEqual(mock.searchTerm, "hello")
+        XCTAssertEqual(itemsObserver.events.dropFirst(), [.next(1, expectedItems)])
+    }
+
 
     func testSearchCallsFetchItems() {
         let bag = DisposeBag()
@@ -94,7 +128,7 @@ final class ListViewControllerTests: XCTestCase {
             mock
         }
 
-        let sut = ListViewController.ViewModel(dependency: dep)
+        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
 
@@ -102,9 +136,11 @@ final class ListViewControllerTests: XCTestCase {
 
         sut.searchTerm.accept(expectedSearchTerm)
 
-        XCTAssertEqual(mock.fetchItemsCallCount, 2)
+        scheduler.start()
+
+        XCTAssertEqual(mock.fetchItemsCallCount, 1)
         XCTAssertEqual(mock.searchTerm, expectedSearchTerm)
-        XCTAssertEqual(itemsObserver.events.dropFirst(), [.next(0, expectedItems)])
+        XCTAssertEqual(itemsObserver.events.dropFirst(), [.next(1, expectedItems)])
     }
 }
 

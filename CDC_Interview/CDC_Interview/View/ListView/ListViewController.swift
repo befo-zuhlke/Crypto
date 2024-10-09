@@ -105,12 +105,13 @@ extension ListViewController {
 
         private var fetcher: Fetching
 
-        init(dependency: Dependency = Dependency.shared) {
+        init(dependency: Dependency = Dependency.shared, scheduler: SchedulerType = MainScheduler.instance) {
             fetcher = dependency.resolve(Fetching.self)!
 
             let fetchItems = fetchItems(fetcher: fetcher)
 
             searchTerm
+                .debounce(.milliseconds(300), scheduler: scheduler)
                 .distinctUntilChanged()
                 .flatMapLatest(fetchItems)
                 .asDriver(onErrorDriveWith: .empty())
