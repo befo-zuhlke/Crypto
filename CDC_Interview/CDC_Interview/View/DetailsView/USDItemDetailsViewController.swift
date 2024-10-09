@@ -3,8 +3,6 @@ import Foundation
 import UIKit
 import RxSwift
 import RxCocoa
-import Combine
-import RxCombine
 
 class USDItemDetailsViewController: UIViewController {
     private let warningLabel: UILabel = .init()
@@ -123,64 +121,3 @@ class USDItemDetailsViewController: UIViewController {
         }).disposed(by: disposeBag)
     }
 }
-
-import SwiftUI
-
-struct ItemDetailView: View {
-    var body: some View {
-        Text("Hello, World!")
-    }
-}
-
-extension ItemDetailView {
-    class ViewModel: ObservableObject {
-
-        @Published var title: String?
-        @Published var warning: String?
-        @Published var price: String?
-        @Published var tags: [String] = []
-
-        init(
-            dependency: Dependency = Dependency.shared,
-            item: AnyPricable,
-            scheduler: SchedulerType = MainScheduler.instance
-        ) {
-
-            let allpriceUseCase = dependency.resolve(AllPriceUseCase.self)!
-            let featureFlags = dependency.resolve(FeatureFlagProvider.self)!
-
-            let foundPrice = allpriceUseCase.fetchItems()
-                .observe(on: scheduler)
-                .compactMap { $0.first { $0.id == item.id } }
-                .share()
-
-            foundPrice.publisher
-                .map(\.prices)
-                .map { $0.map { "\($0.currency): \($0.value)" }.joined(separator: "\n") }
-                .eraseToAnyPublisher()
-                .replaceError(with: "")
-                .assign(to: &$price)
-
-            foundPrice.publisher
-                .map(\.name)
-                .replaceError(with: "")
-                .assign(to: &$title)
-
-            foundPrice.publisher
-                .map(\.tags)
-                .map { $0.map { $0.rawValue } }
-                .replaceError(with: [])
-                .assign(to: &$tags)
-
-            featureFlags.observeFlagValue(flag: .supportEUR).map {
-                $0 ? "EUR is supported, please select item from list view again" : nil
-            }
-            .publisher
-            .replaceError(with: nil)
-            .assign(to: &$warning)
-
-        }
-    }
-}
-
-

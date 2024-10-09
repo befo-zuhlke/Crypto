@@ -2,6 +2,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import SwiftUI
 
 class ListViewController: UIViewController {
 
@@ -70,12 +71,12 @@ class ListViewController: UIViewController {
             .disposed(by: disposeBag)
 
         $navigateWithPrice
-            .compactMap { $0?.id }
+            .compactMap { $0}
             .subscribe {
                 switch $0 {
-                case let .next(priceId):
+                case let .next(price):
                     self.navigationController?.pushViewController(
-                        USDItemDetailsViewController(priceId: priceId),
+                        UIHostingController(rootView: ItemDetailView(item: price)),
                         animated: true
                     )
                 case let .error(e):

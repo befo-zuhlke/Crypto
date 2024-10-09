@@ -114,7 +114,7 @@ struct ItemDetailViewModelTests {
 
         scheduler.start()
 
-        #expect(sut.warning == nil)
+        #expect(sut.warning == "")
     }
 }
 

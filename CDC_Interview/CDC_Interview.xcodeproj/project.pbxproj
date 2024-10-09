@@ -33,6 +33,7 @@
 		92363E842CB5AD800097FAB7 /* Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E832CB5AD710097FAB7 /* Fetching.swift */; };
 		92363E862CB6937A0097FAB7 /* ItemDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E852CB6937A0097FAB7 /* ItemDetailViewModelTests.swift */; };
 		92363E892CB6F8910097FAB7 /* RxCombine in Frameworks */ = {isa = PBXBuildFile; productRef = 92363E882CB6F8910097FAB7 /* RxCombine */; };
+		92363E8B2CB72CE50097FAB7 /* ItemDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E8A2CB72CDE0097FAB7 /* ItemDetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,7 @@
 		92363E812CB5ACD40097FAB7 /* Test+Fakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+Fakes.swift"; sourceTree = "<group>"; };
 		92363E832CB5AD710097FAB7 /* Fetching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetching.swift; sourceTree = "<group>"; };
 		92363E852CB6937A0097FAB7 /* ItemDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailViewModelTests.swift; sourceTree = "<group>"; };
+		92363E8A2CB72CDE0097FAB7 /* ItemDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,6 +185,7 @@
 		1F96703E2C939E5E004DB8FD /* DetailsView */ = {
 			isa = PBXGroup;
 			children = (
+				92363E8A2CB72CDE0097FAB7 /* ItemDetailsView.swift */,
 				1F9670412C939F76004DB8FD /* USDItemDetailsViewController.swift */,
 			);
 			path = DetailsView;
@@ -322,6 +325,7 @@
 				1F96700A2C91A7E1004DB8FD /* AppDelegate.swift in Sources */,
 				1F96700C2C91A7E1004DB8FD /* SceneDelegate.swift in Sources */,
 				1F96701E2C91A806004DB8FD /* Model.swift in Sources */,
+				92363E8B2CB72CE50097FAB7 /* ItemDetailsView.swift in Sources */,
 				1F9670422C939F76004DB8FD /* USDItemDetailsViewController.swift in Sources */,
 				1F9670392C931DC1004DB8FD /* USDPriceUseCase.swift in Sources */,
 				1F96702B2C91C704004DB8FD /* InstrumentPriceCell.swift in Sources */,
