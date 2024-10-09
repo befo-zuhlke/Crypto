@@ -111,6 +111,7 @@ extension ListViewController {
             let fetchItems = fetchItems(fetcher: fetcher)
 
             searchTerm
+                .distinctUntilChanged()
                 .flatMapLatest(fetchItems)
                 .asDriver(onErrorDriveWith: .empty())
                 .drive(items)
