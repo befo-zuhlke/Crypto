@@ -152,8 +152,8 @@ class MockUSDPriceUseCase: USDPriceUseCase {
 }
 
 class MockAllPriceUseCase: AllPriceUseCase {
-    var stubbedFetchItemsResult: Observable<AllPrice.Price>!
-    override func fetchItems() -> Observable<AllPrice.Price> {
+    var stubbedFetchItemsResult: Observable<[AnyPricable]>!
+    override func fetchItems() -> Observable<[AnyPricable]> {
         return stubbedFetchItemsResult
     }
 }

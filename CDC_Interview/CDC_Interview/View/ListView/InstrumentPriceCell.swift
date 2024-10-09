@@ -76,7 +76,7 @@ extension InstrumentPriceCell {
         }
 
         static func toUSDPrice(prices: [Price]) -> String {
-            "\(prices.first { $0.currency == "usd" }?.value ?? 0)"
+            "\(prices.first { $0.currency == .usd }?.value ?? 0)"
         }
     }
 }

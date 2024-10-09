@@ -3,6 +3,8 @@ import Foundation
 import UIKit
 import RxSwift
 import RxCocoa
+import Combine
+import RxCombine
 
 class USDItemDetailsViewController: UIViewController {
     private let warningLabel: UILabel = .init()
@@ -122,6 +124,42 @@ class USDItemDetailsViewController: UIViewController {
     }
 }
 
-class USDItemDetailsViewModel {
-    
+import SwiftUI
+
+struct ItemDetailView: View {
+    var body: some View {
+        Text("Hello, World!")
+    }
 }
+
+extension ItemDetailView {
+    class ViewModel: ObservableObject {
+
+        @Published var title: String?
+        @Published var warning: String?
+        @Published var price: String?
+        @Published var tags: [String] = []
+
+        init(
+            dependency: Dependency = Dependency.shared,
+            item: AnyPricable,
+            scheduler: SchedulerType = MainScheduler.instance
+        ) {
+
+            let allpriceUseCase = dependency.resolve(AllPriceUseCase.self)!
+
+            allpriceUseCase.fetchItems()
+                .observe(on: scheduler)
+                .compactMap { $0.first { $0.id == item.id } }
+                .map { $0.prices }
+                .map { $0.map { "\($0.currency): \($0.value)" }.joined(separator: "\n") }
+                .publisher
+                .eraseToAnyPublisher()
+                .replaceError(with: "")
+                .assign(to: &$price)
+
+        }
+    }
+}
+
+

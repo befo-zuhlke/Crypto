@@ -31,6 +31,7 @@
 		92363E802CB5A3860097FAB7 /* Fakery in Frameworks */ = {isa = PBXBuildFile; productRef = 92363E7F2CB5A3860097FAB7 /* Fakery */; };
 		92363E822CB5ACE90097FAB7 /* Test+Fakes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E812CB5ACD40097FAB7 /* Test+Fakes.swift */; };
 		92363E842CB5AD800097FAB7 /* Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E832CB5AD710097FAB7 /* Fetching.swift */; };
+		92363E862CB6937A0097FAB7 /* ItemDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E852CB6937A0097FAB7 /* ItemDetailViewModelTests.swift */; };
 		92363E892CB6F8910097FAB7 /* RxCombine in Frameworks */ = {isa = PBXBuildFile; productRef = 92363E882CB6F8910097FAB7 /* RxCombine */; };
 /* End PBXBuildFile section */
 
@@ -68,6 +69,7 @@
 		1FBEC5A22C940DE300732A9C /* ListViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewControllerTests.swift; sourceTree = "<group>"; };
 		92363E812CB5ACD40097FAB7 /* Test+Fakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Test+Fakes.swift"; sourceTree = "<group>"; };
 		92363E832CB5AD710097FAB7 /* Fetching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetching.swift; sourceTree = "<group>"; };
+		92363E852CB6937A0097FAB7 /* ItemDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +193,7 @@
 			children = (
 				92363E812CB5ACD40097FAB7 /* Test+Fakes.swift */,
 				1FBEC5A22C940DE300732A9C /* ListViewControllerTests.swift */,
+				92363E852CB6937A0097FAB7 /* ItemDetailViewModelTests.swift */,
 			);
 			path = CDC_InterviewTests;
 			sourceTree = "<group>";
@@ -332,6 +335,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92363E862CB6937A0097FAB7 /* ItemDetailViewModelTests.swift in Sources */,
 				92363E822CB5ACE90097FAB7 /* Test+Fakes.swift in Sources */,
 				1FBEC5A32C940DE300732A9C /* ListViewControllerTests.swift in Sources */,
 			);

@@ -15,7 +15,7 @@ struct USDPrice: Decodable {
 }
 
 struct AllPrice: Decodable {
-    let data: Price
+    let data: [Price]
 
     struct Price: Decodable {
         let id: Int
@@ -39,13 +39,18 @@ protocol Pricable: Equatable {
 
 struct Price: Equatable { // Conforming to Equatable
     let value: Decimal
-    let currency: String
+    let currency: Currency
+}
+
+enum Currency: String, CaseIterable {
+    case usd
+    case eur
 }
 
 // Implementing Equatable for USDPrice
 extension USDPrice: Pricable {
     var prices: [Price] {
-        [.init(value: usd, currency: "usd")]
+        [.init(value: usd, currency: .usd)]
     }
 }
 
@@ -53,8 +58,8 @@ extension USDPrice: Pricable {
 extension AllPrice.Price: Pricable {
     var prices: [Price] {
         [
-            .init(value: price.usd, currency: "usd"),
-            .init(value: price.eur, currency: "eur")
+            .init(value: price.usd, currency: .usd),
+            .init(value: price.eur, currency: .eur)
         ]
     }
 }

@@ -142,10 +142,20 @@ class ItemPriceFetcher: Fetching {
     func fetchItems(searchText: String?) -> Observable<[AnyPricable]> {
         Observable.combineLatest(
             featureFlagProvider.observeFlagValue(flag: .supportEUR),
-            usdUseCase.fetchItems()
-//            allUseCase.fetchItems()
-        ).map { shouldUseNewAPI, usdResult in
-            let searchedPrice = usdResult
+            usdUseCase.fetchItems(),
+            allUseCase.fetchItems()
+        ).map { shouldUseNewAPI, usdResult, allPrices in
+
+            let prices = usdResult.map { usd in
+                guard let match = allPrices.first(where: { allPrice in
+                    allPrice.id == usd.id
+                } ) else {
+                    return usd
+                }
+
+                return match
+            }
+            let searchedPrice = prices
                 .filter {
                     if let searchText, searchText.isEmpty == false {
                         return $0.name.contains(searchText)
