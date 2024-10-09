@@ -26,7 +26,7 @@ class USDItemDetailsViewController: UIViewController {
         let featureFlagProvider = Dependency.shared.resolve(FeatureFlagProvider.self)!
         self.priceId = priceId
         
-        let fetchedObservable: Observable<Pricable?> = usdUseCase.fetchItems()
+        let fetchedObservable: Observable<AnyPricable?> = usdUseCase.fetchItems()
             .observe(on: MainScheduler.instance)
             .map { items in
                 return items.first { $0.id == priceId }

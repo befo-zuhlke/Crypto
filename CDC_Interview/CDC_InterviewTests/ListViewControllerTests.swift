@@ -33,7 +33,7 @@ final class ListViewControllerTests: XCTestCase {
             let mock = MockUSDPriceUseCase()
             mock.stubbedFetchItemsResult = scheduler.createColdObservable([
                 .next(0, []),
-                .next(10, [USDPrice.init(id: 1, name: "a", usd: 1, tags: [.deposit])])
+                .next(10, [AnyPricable(USDPrice.init(id: 1, name: "a", usd: 1, tags: [.deposit]))])
             ]).asObservable()
             
             return mock
@@ -47,7 +47,7 @@ final class ListViewControllerTests: XCTestCase {
         
         let vc = ListViewController(dependency: dep)
 
-        let itemsObserver = scheduler.createObserver([InstrumentPriceCell.ViewModel].self)
+        let itemsObserver = scheduler.createObserver([AnyPricable].self)
         vc.itemsObservable.distinctUntilChanged().bind(to: itemsObserver).disposed(by: disposeBag)
         vc.fetchItems(searchText: nil).subscribe().disposed(by: disposeBag)
 
@@ -55,14 +55,14 @@ final class ListViewControllerTests: XCTestCase {
 
         let x = itemsObserver.events
             .map {
-                Recorded(time: $0.time, value: $0.value.map {
-                    val in val.map { x in x.prices }
-                })
+                Recorded(time: $0.time, value: $0.value)
             }
 
         XCTAssertEqual(x, [
             .next(0, []),
-            .next(10, [USDPrice.init(id: 1, name: "a", usd: 1, tags: [.deposit])]),
+            .next(10, [
+                AnyPricable(USDPrice.init(id: 1, name: "a", usd: 1, tags: [.deposit]))
+            ])
         ])
     }
 
@@ -95,8 +95,8 @@ final class ListViewControllerTests: XCTestCase {
 }
 
 class MockUSDPriceUseCase: USDPriceUseCase {
-    var stubbedFetchItemsResult: Observable<[USDPrice]>!
-    override func fetchItems() -> Observable<[USDPrice]> {
+    var stubbedFetchItemsResult: Observable<[AnyPricable]>!
+    override func fetchItems() -> Observable<[AnyPricable]> {
         return stubbedFetchItemsResult
     }
 }

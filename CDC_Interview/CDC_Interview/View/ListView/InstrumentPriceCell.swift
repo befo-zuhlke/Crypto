@@ -17,7 +17,7 @@ class InstrumentPriceCell: UITableViewCell {
 
     let viewModel = ViewModel()
 
-    func configure(price: Pricable) {
+    func configure(price: AnyPricable) {
         viewModel.price = price
 
         viewModel.title$.asDriver(onErrorDriveWith: .empty())
@@ -50,7 +50,7 @@ extension InstrumentPriceCell {
 
         var bag: DisposeBag = .init()
 
-        @Observed var price: Pricable?
+        @Observed var price: (AnyPricable)?
 
         let title$: BehaviorRelay<String> = .init(value: "")
         let description$: BehaviorRelay<String> = .init(value: "")

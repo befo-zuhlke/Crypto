@@ -11,16 +11,16 @@ class ListViewController: UIViewController {
     private let searchBar = UISearchBar()
     private let disposeBag = DisposeBag()
     
-    var itemsObservable: Observable<[Pricable]> {
+    var itemsObservable: Observable<[AnyPricable]> {
         itemsRelay.asObservable()
     }
     
-    private var itemsRelay: BehaviorRelay<[Pricable]> = .init(value: [])
+    private var itemsRelay: BehaviorRelay<[AnyPricable]> = .init(value: [])
     private let usdUseCase: USDPriceUseCase
     private let allUseCase: AllPriceUseCase
     private let featureFlagProvider: FeatureFlagProvider
 
-    @Observed private var navigateWithPrice: Pricable!
+    @Observed private var navigateWithPrice: AnyPricable?
 
     init(dependency: Dependency = Dependency.shared) {
         self.usdUseCase = dependency.resolve(USDPriceUseCase.self)!
@@ -72,7 +72,7 @@ class ListViewController: UIViewController {
             .bind(to: tableView.rx.items(cellIdentifier: cellId))(Self.configureCell)
             .disposed(by: disposeBag)
 
-        tableView.rx.modelSelected(Pricable.self)
+        tableView.rx.modelSelected(AnyPricable.self)
             .bind(to: $navigateWithPrice)
             .disposed(by: disposeBag)
 
@@ -101,7 +101,7 @@ class ListViewController: UIViewController {
         .disposed(by: disposeBag)
     }
 
-    static func configureCell(index: Int, price: Pricable, cell: UITableViewCell) {
+    static func configureCell(index: Int, price: AnyPricable, cell: UITableViewCell) {
         guard let singleCell = cell as? InstrumentPriceCell else {
             return
         }

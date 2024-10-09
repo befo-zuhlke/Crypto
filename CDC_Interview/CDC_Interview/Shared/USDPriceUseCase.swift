@@ -6,8 +6,8 @@ import RxCocoa
 class USDPriceUseCase {
     private let disposeBag = DisposeBag()
     
-    func fetchItems() -> Observable<[Pricable]> {
-        let itemsObservable = Observable<[Pricable]>.create { observer in
+    func fetchItems() -> Observable<[AnyPricable]> {
+        let itemsObservable = Observable<[AnyPricable]>.create { observer in
             DispatchQueue.global()
                 .asyncAfter(deadline: .now() + 2) { // Note: add 2 seconds to simulate API response time
                 let path = Bundle.main.path(forResource: "usdPrices", ofType: "json")!
@@ -20,7 +20,7 @@ class USDPriceUseCase {
                 do {
                     let items = try JSONDecoder().decode([USDPrice].self, from: data)
                     DispatchQueue.main.async {
-                        observer.onNext(items)
+                        observer.onNext(items.map(AnyPricable.init))
                         observer.onCompleted()
                     }
                 } catch {
