@@ -31,6 +31,7 @@
 		92363E802CB5A3860097FAB7 /* Fakery in Frameworks */ = {isa = PBXBuildFile; productRef = 92363E7F2CB5A3860097FAB7 /* Fakery */; };
 		92363E822CB5ACE90097FAB7 /* Test+Fakes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E812CB5ACD40097FAB7 /* Test+Fakes.swift */; };
 		92363E842CB5AD800097FAB7 /* Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E832CB5AD710097FAB7 /* Fetching.swift */; };
+		92363E892CB6F8910097FAB7 /* RxCombine in Frameworks */ = {isa = PBXBuildFile; productRef = 92363E882CB6F8910097FAB7 /* RxCombine */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +75,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92363E892CB6F8910097FAB7 /* RxCombine in Frameworks */,
 				1F9670262C91A8D5004DB8FD /* RxSwift in Frameworks */,
 				1F9670242C91A8D5004DB8FD /* RxRelay in Frameworks */,
 				1F9670222C91A8D5004DB8FD /* RxCocoa in Frameworks */,
@@ -213,6 +215,7 @@
 				1F9670212C91A8D5004DB8FD /* RxCocoa */,
 				1F9670232C91A8D5004DB8FD /* RxRelay */,
 				1F9670252C91A8D5004DB8FD /* RxSwift */,
+				92363E882CB6F8910097FAB7 /* RxCombine */,
 			);
 			productName = CDC_Interview;
 			productReference = 1F9670062C91A7E1004DB8FD /* CDC_Interview.app */;
@@ -271,6 +274,7 @@
 			packageReferences = (
 				1F96701F2C91A8AC004DB8FD /* XCRemoteSwiftPackageReference "RxSwift" */,
 				92363E7E2CB5A3860097FAB7 /* XCRemoteSwiftPackageReference "Fakery" */,
+				92363E872CB6F8910097FAB7 /* XCRemoteSwiftPackageReference "RxCombine" */,
 			);
 			productRefGroup = 1F9670072C91A7E1004DB8FD /* Products */;
 			projectDirPath = "";
@@ -629,6 +633,14 @@
 				minimumVersion = 5.1.0;
 			};
 		};
+		92363E872CB6F8910097FAB7 /* XCRemoteSwiftPackageReference "RxCombine" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CombineCommunity/RxCombine";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -656,6 +668,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 92363E7E2CB5A3860097FAB7 /* XCRemoteSwiftPackageReference "Fakery" */;
 			productName = Fakery;
+		};
+		92363E882CB6F8910097FAB7 /* RxCombine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92363E872CB6F8910097FAB7 /* XCRemoteSwiftPackageReference "RxCombine" */;
+			productName = RxCombine;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
