@@ -12,6 +12,12 @@ struct USDPrice: Decodable {
     let tags: [Tag] 
 }
 
+extension USDPrice: Equatable {
+    static func == (lhs: USDPrice, rhs: USDPrice) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
 
 struct AllPrice: Decodable {
     struct Price: Decodable {

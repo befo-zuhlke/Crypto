@@ -13,12 +13,13 @@ let faker = Faker()
 
 extension InstrumentPriceCell.ViewModel {
     static var fake: InstrumentPriceCell.ViewModel {
-        .init(
-            usdPrice: .init(
-                id: faker.number.randomInt(),
-                name: faker.lorem.word(),
-                usd: Decimal(faker.number.randomDouble()),
-                tags: [.deposit])
+        let x = InstrumentPriceCell.ViewModel()
+        x.usdPrice = .init(
+            id: faker.number.randomInt(),
+            name: faker.lorem.word(),
+            usd: Decimal(faker.number.randomDouble()),
+            tags: [.deposit]
         )
+        return x
     }
 }

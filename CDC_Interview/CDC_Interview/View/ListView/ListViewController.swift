@@ -17,7 +17,9 @@ class ListViewController: UIViewController {
     private let usdUseCase: USDPriceUseCase
     private let allUseCase: AllPriceUseCase
     private let featureFlagProvider: FeatureFlagProvider
-    
+
+    @Observed private var navigateWithPrice: USDPrice!
+
     init(dependency: Dependency = Dependency.shared) {
         self.usdUseCase = dependency.resolve(USDPriceUseCase.self)!
         allUseCase = dependency.resolve(AllPriceUseCase.self)!
@@ -66,24 +68,36 @@ class ListViewController: UIViewController {
         itemsObservable
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .bind(to: tableView.rx.items(cellIdentifier: "InstrumentPriceCell")) { index, vm, cell in
+
                 guard let singleCell = cell as? InstrumentPriceCell else {
                     return
                 }
                 singleCell.configure(viewModel: vm)
             }
             .disposed(by: disposeBag)
-        
+
         tableView.rx.itemSelected
             .withLatestFrom(itemsObservable) { ($0, $1) }
-            .map { indexPath, items in
-                let vm = items[indexPath.row]
-                
-                // TODO: if 'supportEUR' feature flag is on, we need to route to a Price Detail View Controller which able to show both EUR + USD prices.
-                self.navigationController?.pushViewController(USDItemDetailsViewController(priceId: vm.usdPrice.id), animated: true)
+            .compactMap { indexPath, items in
+                items[indexPath.row].usdPrice
             }
-            .subscribe()
+            .bind(to: $navigateWithPrice)
             .disposed(by: disposeBag)
-        
+
+        $navigateWithPrice
+            .compactMap { $0 }
+            .subscribe {
+                switch $0 {
+                case let .next(price):
+                    self.navigationController?.pushViewController(USDItemDetailsViewController(priceId: price.id), animated: true)
+                case let .error(e):
+                    print("navigation error: \(e)")
+                case .completed:
+                    print("navigation finished")
+                }
+            }
+            .disposed(by: disposeBag)
+
         // Fetch the items from the ViewModel
         searchBar.searchTextField.rx.text.asDriver().flatMapLatest { searchText in
             self.fetchItems(searchText: searchText).asDriver(onErrorDriveWith: .empty())
@@ -97,10 +111,10 @@ extension ListViewController {
     func fetchItems(searchText: String?) -> Observable<Void> {
         Observable.combineLatest(
             featureFlagProvider.observeFlagValue(flag: .supportEUR),
-            usdUseCase.fetchItems(),
-             allUseCase.fetchItems()
+            usdUseCase.fetchItems()
+//            allUseCase.fetchItems()
         )
-        .do(onNext: { shouldUseNewAPI, usdResult, _ in
+        .do(onNext: { shouldUseNewAPI, usdResult in
             guard shouldUseNewAPI else {
                 let viewModels = usdResult
                     .filter {
@@ -109,8 +123,12 @@ extension ListViewController {
                         }
                         return true
                     }
-                    .map { InstrumentPriceCell.ViewModel.init(usdPrice: $0) }
-                self.itemsRelay.accept(viewModels) 
+                    .map {
+                        let x = InstrumentPriceCell.ViewModel()
+                        x.usdPrice = $0
+                        return x
+                    }
+                self.itemsRelay.accept(viewModels)
                 return
             }
             

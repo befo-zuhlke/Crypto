@@ -53,9 +53,16 @@ final class ListViewControllerTests: XCTestCase {
 
         scheduler.start()
 
-        XCTAssertEqual(itemsObserver.events, [
+        let x = itemsObserver.events
+            .map {
+                Recorded(time: $0.time, value: $0.value.map {
+                    val in val.map { x in x.usdPrice }
+                })
+            }
+
+        XCTAssertEqual(x, [
             .next(0, []),
-            .next(10, [InstrumentPriceCell.ViewModel(usdPrice: USDPrice.init(id: 1, name: "a", usd: 1, tags: [.deposit]))]),
+            .next(10, [USDPrice.init(id: 1, name: "a", usd: 1, tags: [.deposit])]),
         ])
     }
 
