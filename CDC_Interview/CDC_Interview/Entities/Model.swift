@@ -87,3 +87,15 @@ struct AnyPricable: Pricable {
         return lhs.id == rhs.id
     }
 }
+
+extension AnyPricable: CustomDebugStringConvertible {
+    var debugDescription: String {
+        """
+            type:\(type(of: base))
+            id: \(id),
+            name: \(name),
+            prices: \(prices),
+            tags: \(tags)
+        """
+    }
+}

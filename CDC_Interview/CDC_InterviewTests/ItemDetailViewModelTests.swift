@@ -16,7 +16,7 @@ import RxSwift
 struct ItemDetailViewModelTests {
 
     @MainActor
-    @Test("finds price in all price displays all prices", arguments: [
+    @Test("format's output from item", arguments: [
         AllPrice.Price.fake,
         AllPrice.Price.fake,
         AllPrice.Price.fake
@@ -25,27 +25,14 @@ struct ItemDetailViewModelTests {
         let dep = Dependency()
         let scheduler = TestScheduler(initialClock: 0)
 
-        let expectedPrice = USDPrice(id: price.id, name: price.name, usd: price.price.usd, tags: price.tags)
-        let item = AnyPricable(expectedPrice)
+        let item = AnyPricable(price)
 
         dep.register(FeatureFlagProvider.self) { _ in
             let mock = MockFeatureFlagProvider()
             mock.result = true
             return mock
         }
-
-        dep.register(AllPriceUseCase.self) { _ in
-            let mock = MockAllPriceUseCase()
-            mock.stubbedFetchItemsResult = scheduler.createColdObservable([
-                .next(5, [
-                    AnyPricable(AllPrice.Price.fake),
-                    AnyPricable(price),
-                    AnyPricable(AllPrice.Price.fake)
-                ])
-            ]).asObservable()
-            return mock
-        }
-
+        
         let sut = ItemDetailView.ViewModel(dependency: dep, item: item, scheduler: scheduler)
 
         scheduler.start()
@@ -56,7 +43,7 @@ struct ItemDetailViewModelTests {
     }
 
     @MainActor
-    @Test("shows warning label")
+    @Test("shows warning label when not latest price")
     func testWarning() throws {
         let dep = Dependency()
         let scheduler = TestScheduler(initialClock: 0)
@@ -88,7 +75,7 @@ struct ItemDetailViewModelTests {
     }
 
     @MainActor
-    @Test("hides warning label")
+    @Test("hides warning label when v1 api being used")
     func hidesWarning() throws {
         let dep = Dependency()
         let scheduler = TestScheduler(initialClock: 0)
@@ -99,6 +86,38 @@ struct ItemDetailViewModelTests {
         dep.register(FeatureFlagProvider.self) { _ in
             let mock = MockFeatureFlagProvider()
             mock.result = false
+            return mock
+        }
+
+        dep.register(AllPriceUseCase.self) { _ in
+            let mock = MockAllPriceUseCase()
+            mock.stubbedFetchItemsResult = scheduler.createColdObservable([
+                .next(5, [
+                    AnyPricable(expectedPrice)
+                ])
+            ]).asObservable()
+            return mock
+        }
+
+        let sut = ItemDetailView.ViewModel(dependency: dep, item: item, scheduler: scheduler)
+
+        scheduler.start()
+
+        #expect(sut.warning == "")
+    }
+
+    @MainActor
+    @Test("hides warning label when v2 api being used")
+    func hidesWarningOnV2Api() throws {
+        let dep = Dependency()
+        let scheduler = TestScheduler(initialClock: 0)
+
+        let expectedPrice = AllPrice.Price.fake
+        let item = AnyPricable(expectedPrice)
+
+        dep.register(FeatureFlagProvider.self) { _ in
+            let mock = MockFeatureFlagProvider()
+            mock.result = true
             return mock
         }
 

@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "F339172B-A1A1-44BD-9467-5EC53BA9818F",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:CDC_Interview.xcodeproj",
+      "identifier" : "1F9670052C91A7E1004DB8FD",
+      "name" : "CDC_Interview"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:CDC_Interview.xcodeproj",
+        "identifier" : "1FBEC59F2C940DE300732A9C",
+        "name" : "CDC_InterviewTests"
+      }
+    }
+  ],
+  "version" : 1
+}

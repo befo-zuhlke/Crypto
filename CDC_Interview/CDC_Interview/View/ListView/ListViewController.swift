@@ -12,11 +12,14 @@ class ListViewController: UIViewController {
     private let searchBar = UISearchBar()
     private let disposeBag = DisposeBag()
 
-    @Observed private var navigateWithPrice: AnyPricable?
-    private let vm = ViewModel()
+    private lazy var vm = ViewModel()
 
     init(dependency: Dependency = Dependency.shared) {
         super.init(nibName: nil, bundle: nil)
+
+        dependency.register(Navigating.self) { _ in
+            self.navigationController!
+        }
     }
 
     required init?(coder: NSCoder) {
@@ -67,24 +70,7 @@ class ListViewController: UIViewController {
             .disposed(by: disposeBag)
 
         tableView.rx.modelSelected(AnyPricable.self)
-            .bind(to: $navigateWithPrice)
-            .disposed(by: disposeBag)
-
-        $navigateWithPrice
-            .compactMap { $0}
-            .subscribe {
-                switch $0 {
-                case let .next(price):
-                    self.navigationController?.pushViewController(
-                        UIHostingController(rootView: ItemDetailView(item: price)),
-                        animated: true
-                    )
-                case let .error(e):
-                    print("navigation error: \(e)")
-                case .completed:
-                    print("navigation finished")
-                }
-            }
+            .bind(to: vm.$navigateWithPrice)
             .disposed(by: disposeBag)
     }
 
@@ -99,25 +85,40 @@ class ListViewController: UIViewController {
 extension ListViewController {
     class ViewModel {
         var bag: DisposeBag = .init()
-        // input
+
         var searchTerm: BehaviorRelay<String?> = .init(value: nil)
-        // output
         var items: BehaviorRelay<[AnyPricable]> = .init(value: [])
+        @Observed var navigateWithPrice: AnyPricable?
 
         private var fetcher: Fetching
+        private var flagProvider: FeatureFlagProvider
+        private var navigator: Navigating
 
         init(dependency: Dependency = Dependency.shared, scheduler: SchedulerType = MainScheduler.instance) {
             fetcher = dependency.resolve(Fetching.self)!
+            flagProvider = dependency.resolve(FeatureFlagProvider.self)!
+            navigator = dependency.resolve(Navigating.self)!
 
             let fetchItems = fetchItems(fetcher: fetcher)
 
-            searchTerm
+            $navigateWithPrice
+                .compactMap { $0 }
+                .subscribe(onNext:navigator.toDetailView)
+                .disposed(by: bag)
+
+            let search$ = searchTerm
                 .debounce(.milliseconds(300), scheduler: scheduler)
                 .distinctUntilChanged()
-                .flatMapLatest(fetchItems)
-                .asDriver(onErrorDriveWith: .empty())
-                .drive(items)
-                .disposed(by: bag)
+
+            Observable.combineLatest(
+                flagProvider.observeFlagValue(flag: .supportEUR).distinctUntilChanged(),
+                search$
+            )
+            .map { $0.1 }
+            .flatMapLatest(fetchItems)
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(items)
+            .disposed(by: bag)
         }
     }
 
@@ -141,31 +142,19 @@ class ItemPriceFetcher: Fetching {
     }
 
     func fetchItems(searchText: String?) -> Observable<[AnyPricable]> {
-        Observable.combineLatest(
-            featureFlagProvider.observeFlagValue(flag: .supportEUR),
-            usdUseCase.fetchItems(),
-            allUseCase.fetchItems()
-        ).map { shouldUseNewAPI, usdResult, allPrices in
 
-            let prices = usdResult.map { usd in
-                guard let match = allPrices.first(where: { allPrice in
-                    allPrice.id == usd.id
-                } ), shouldUseNewAPI else {
-                    return usd
-                }
-
-                return match
+        let v1 = featureFlagProvider.observeFlagValue(flag: .supportEUR)
+            .filter { $0 == false }
+            .flatMapLatest { _ in
+                self.usdUseCase.fetchItems()
             }
 
-            let searchedPrice = prices
-                .filter {
-                    if let searchText, searchText.isEmpty == false {
-                        return $0.name.contains(searchText)
-                    }
-                    return true
-                }
+        let v2 = featureFlagProvider.observeFlagValue(flag: .supportEUR)
+            .filter { $0 == true }
+            .flatMapLatest { _ in
+                self.allUseCase.fetchItems()
+            }
 
-            return searchedPrice
-        }
+        return v1.amb(v2)
     }
 }

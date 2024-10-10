@@ -31,6 +31,14 @@ final class ListViewControllerTests: XCTestCase {
             mock
         }
 
+        dep.register(FeatureFlagProvider.self) { _ in
+            FeatureFlagProvider()
+        }
+
+        dep.register(Navigating.self) { _ in
+            MockNavigator()
+        }
+
         let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
@@ -57,6 +65,12 @@ final class ListViewControllerTests: XCTestCase {
         let mock = MockFetcher(items: expectedItems)
         dep.register(Fetching.self) { _ in
             mock
+        }
+        dep.register(FeatureFlagProvider.self) { _ in
+            FeatureFlagProvider()
+        }
+        dep.register(Navigating.self) { _ in
+            MockNavigator()
         }
 
         let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
@@ -91,6 +105,12 @@ final class ListViewControllerTests: XCTestCase {
         let mock = MockFetcher(items: expectedItems)
         dep.register(Fetching.self) { _ in
             mock
+        }
+        dep.register(FeatureFlagProvider.self) { _ in
+            FeatureFlagProvider()
+        }
+        dep.register(Navigating.self) { _ in
+            MockNavigator()
         }
 
         let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
@@ -128,6 +148,14 @@ final class ListViewControllerTests: XCTestCase {
             mock
         }
 
+        dep.register(FeatureFlagProvider.self) { _ in
+            FeatureFlagProvider()
+        }
+
+        dep.register(Navigating.self) { _ in
+            MockNavigator()
+        }
+
         let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
@@ -150,11 +178,15 @@ final class ListViewControllerTests: XCTestCase {
         let dep = Dependency()
 
         let expectedItems: [AnyPricable] = [
+            AnyPricable(USDPrice.fake),
+            AnyPricable(USDPrice.fake),
+            AnyPricable(USDPrice.fake),
+            AnyPricable(USDPrice.fake),
             AnyPricable(USDPrice.fake)
         ]
 
         dep.register(FeatureFlagProvider.self) { _ in
-            var mockFeatureFlag = MockFeatureFlagProvider()
+            let mockFeatureFlag = MockFeatureFlagProvider()
             mockFeatureFlag.result = false
             return mockFeatureFlag
         }
@@ -168,7 +200,11 @@ final class ListViewControllerTests: XCTestCase {
 
         let mockAll = MockAllPriceUseCase()
         dep.register(AllPriceUseCase.self) { _ in
-            mockAll.stubbedFetchItemsResult = scheduler.createColdObservable([.next(1, [AnyPricable(AllPrice.Price.fake)])]).asObservable()
+            mockAll.stubbedFetchItemsResult = scheduler.createColdObservable([.next(1, [
+                AnyPricable(AllPrice.Price.fake),
+                AnyPricable(AllPrice.Price.fake),
+                AnyPricable(AllPrice.Price.fake)
+            ])]).asObservable()
             return mockAll
         }
 
@@ -178,6 +214,11 @@ final class ListViewControllerTests: XCTestCase {
 
         dep.register(FeatureFlagProvider.self) { _ in
             FeatureFlagProvider()
+        }
+
+        let mockNav = MockNavigator()
+        dep.register(Navigating.self) { _ in
+            mockNav
         }
 
         let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
@@ -209,13 +250,11 @@ final class ListViewControllerTests: XCTestCase {
 
         dep.register(USDPriceUseCase.self) { _ in
             mockUsd.stubbedFetchItemsResult = scheduler.createColdObservable([
-                .next(1, expectedItems.map {
-                    AnyPricable(USDPrice(
-                        id: $0.id,
-                        name: $0.name,
-                        usd: $0.prices.first { $0.currency == .usd }?.value ?? 0,
-                        tags: $0.tags))
-                })
+                .next(1, [
+                    AnyPricable(USDPrice.fake),
+                    AnyPricable(USDPrice.fake),
+                    AnyPricable(USDPrice.fake)
+                ])
             ]).asObservable()
             return mockUsd
         }
@@ -232,6 +271,11 @@ final class ListViewControllerTests: XCTestCase {
             ItemPriceFetcher(dependency: dep)
         }
 
+        let mockNav = MockNavigator()
+        dep.register(Navigating.self) { _ in
+            mockNav
+        }
+
         let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
@@ -239,6 +283,55 @@ final class ListViewControllerTests: XCTestCase {
         scheduler.start()
 
         XCTAssertEqual(itemsObserver.events.dropFirst(), [.next(2, expectedItems)])
+    }
+
+    func testNavigatesToDetail() {
+        let bag = DisposeBag()
+        let scheduler = TestScheduler(initialClock: 0)
+
+        let dep = Dependency()
+
+        let expectedItems: [AnyPricable] = [
+            AnyPricable(USDPrice.fake),
+            AnyPricable(USDPrice.fake),
+            AnyPricable(USDPrice.fake)
+        ]
+
+        let mock = MockFetcher(items: expectedItems)
+        dep.register(Fetching.self) { _ in
+            mock
+        }
+
+        dep.register(FeatureFlagProvider.self) { _ in
+            FeatureFlagProvider()
+        }
+
+        let mockNav = MockNavigator()
+        dep.register(Navigating.self) { _ in
+            mockNav
+        }
+
+        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
+        let itemsObserver = scheduler.createObserver([AnyPricable].self)
+        sut.items.bind(to: itemsObserver).disposed(by: bag)
+
+        let fake = AnyPricable(USDPrice.fake)
+        sut.navigateWithPrice = fake
+
+        scheduler.start()
+
+        XCTAssertEqual(mockNav.callCount, 1)
+        XCTAssertEqual(mockNav.toDetailViewArgs, fake)
+    }
+}
+
+class MockNavigator: Navigating {
+
+    var callCount = 0
+    var toDetailViewArgs: AnyPricable?
+    func toDetailView(price: AnyPricable) {
+        callCount += 1
+        toDetailViewArgs = price
     }
 }
 

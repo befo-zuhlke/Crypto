@@ -55,51 +55,19 @@ extension ItemDetailView {
             item: AnyPricable,
             scheduler: SchedulerType = MainScheduler.instance
         ) {
-
-            let allpriceUseCase = dependency.resolve(AllPriceUseCase.self)!
             let featureFlags = dependency.resolve(FeatureFlagProvider.self)!
 
-            let foundPrice =
-            Observable.combineLatest(
-                allpriceUseCase.fetchItems(),
-                featureFlags.observeFlagValue(flag: .supportEUR)
-            )
-                .observe(on: scheduler)
-                .map {
-                    let (prices, isEURSupported) = $0
+            price = item.prices.map { "\($0.currency): \($0.value)" }.joined(separator: "\n")
 
-                    guard isEURSupported else {
-                        return item
-                    }
-                    let price = prices.first { $0.id == item.id }
-                    return price ?? item
-                }
-                .share()
+            title = item.name
 
-            foundPrice.publisher
-                .map(\.prices)
-                .map { $0.map { "\($0.currency): \($0.value)" }.joined(separator: "\n") }
-                .eraseToAnyPublisher()
+            tags = item.tags.map { $0.rawValue }
+
+            featureFlags.observeFlagValue(flag: .supportEUR)
+                .map { ($0 && !item.prices.contains { $0.currency == .eur }) ? "EUR is supported, please select item from list view again" : "" }
+                .publisher
                 .replaceError(with: "")
-                .assign(to: &$price)
-
-            foundPrice.publisher
-                .map(\.name)
-                .replaceError(with: "")
-                .assign(to: &$title)
-
-            foundPrice.publisher
-                .map(\.tags)
-                .map { $0.map { $0.rawValue } }
-                .replaceError(with: [])
-                .assign(to: &$tags)
-
-            featureFlags.observeFlagValue(flag: .supportEUR).map {
-                $0 ? "EUR is supported, please select item from list view again" : ""
-            }
-            .publisher
-            .replaceError(with: "")
-            .assign(to: &$warning)
+                .assign(to: &$warning)
 
         }
     }
