@@ -29,7 +29,9 @@ struct ItemDetailViewModelTests {
         let item = AnyPricable(expectedPrice)
 
         dep.register(FeatureFlagProvider.self) { _ in
-            MockFeatureFlagProvider()
+            let mock = MockFeatureFlagProvider()
+            mock.result = true
+            return mock
         }
 
         dep.register(AllPriceUseCase.self) { _ in

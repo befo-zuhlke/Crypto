@@ -59,9 +59,21 @@ extension ItemDetailView {
             let allpriceUseCase = dependency.resolve(AllPriceUseCase.self)!
             let featureFlags = dependency.resolve(FeatureFlagProvider.self)!
 
-            let foundPrice = allpriceUseCase.fetchItems()
+            let foundPrice =
+            Observable.combineLatest(
+                allpriceUseCase.fetchItems(),
+                featureFlags.observeFlagValue(flag: .supportEUR)
+            )
                 .observe(on: scheduler)
-                .map { $0.first { $0.id == item.id } ?? item }
+                .map {
+                    let (prices, isEURSupported) = $0
+
+                    guard isEURSupported else {
+                        return item
+                    }
+                    let price = prices.first { $0.id == item.id }
+                    return price ?? item
+                }
                 .share()
 
             foundPrice.publisher

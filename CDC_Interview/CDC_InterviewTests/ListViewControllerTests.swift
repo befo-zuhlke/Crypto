@@ -142,6 +142,104 @@ final class ListViewControllerTests: XCTestCase {
         XCTAssertEqual(mock.searchTerm, expectedSearchTerm)
         XCTAssertEqual(itemsObserver.events.dropFirst(), [.next(1, expectedItems)])
     }
+
+    func testFeatureFlagCallsV1Api() {
+        let bag = DisposeBag()
+        let scheduler = TestScheduler(initialClock: 0)
+
+        let dep = Dependency()
+
+        let expectedItems: [AnyPricable] = [
+            AnyPricable(USDPrice.fake)
+        ]
+
+        dep.register(FeatureFlagProvider.self) { _ in
+            var mockFeatureFlag = MockFeatureFlagProvider()
+            mockFeatureFlag.result = false
+            return mockFeatureFlag
+        }
+
+        let mockUsd = MockUSDPriceUseCase()
+
+        dep.register(USDPriceUseCase.self) { _ in
+            mockUsd.stubbedFetchItemsResult = scheduler.createColdObservable([.next(1, expectedItems)]).asObservable()
+            return mockUsd
+        }
+
+        let mockAll = MockAllPriceUseCase()
+        dep.register(AllPriceUseCase.self) { _ in
+            mockAll.stubbedFetchItemsResult = scheduler.createColdObservable([.next(1, [AnyPricable(AllPrice.Price.fake)])]).asObservable()
+            return mockAll
+        }
+
+        dep.register(Fetching.self) { _ in
+            ItemPriceFetcher(dependency: dep)
+        }
+
+        dep.register(FeatureFlagProvider.self) { _ in
+            FeatureFlagProvider()
+        }
+
+        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
+        let itemsObserver = scheduler.createObserver([AnyPricable].self)
+        sut.items.bind(to: itemsObserver).disposed(by: bag)
+
+        scheduler.start()
+
+        XCTAssertEqual(itemsObserver.events.dropFirst(), [.next(2, expectedItems)])
+    }
+
+    func testFeatureFlagCallsV2Api() {
+        let bag = DisposeBag()
+        let scheduler = TestScheduler(initialClock: 0)
+
+        let dep = Dependency()
+
+        let expectedItems: [AnyPricable] = [
+            AnyPricable(AllPrice.Price.fake)
+        ]
+
+        dep.register(FeatureFlagProvider.self) { resolver in
+            let mockFeatureFlag = MockFeatureFlagProvider()
+            mockFeatureFlag.result = true
+            return mockFeatureFlag
+        }
+
+        let mockUsd = MockUSDPriceUseCase()
+
+        dep.register(USDPriceUseCase.self) { _ in
+            mockUsd.stubbedFetchItemsResult = scheduler.createColdObservable([
+                .next(1, expectedItems.map {
+                    AnyPricable(USDPrice(
+                        id: $0.id,
+                        name: $0.name,
+                        usd: $0.prices.first { $0.currency == .usd }?.value ?? 0,
+                        tags: $0.tags))
+                })
+            ]).asObservable()
+            return mockUsd
+        }
+
+        let mockAll = MockAllPriceUseCase()
+        dep.register(AllPriceUseCase.self) { _ in
+            mockAll.stubbedFetchItemsResult = scheduler.createColdObservable(
+                [.next(1, expectedItems)]
+            ).asObservable()
+            return mockAll
+        }
+
+        dep.register(Fetching.self) { _ in
+            ItemPriceFetcher(dependency: dep)
+        }
+
+        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
+        let itemsObserver = scheduler.createObserver([AnyPricable].self)
+        sut.items.bind(to: itemsObserver).disposed(by: bag)
+
+        scheduler.start()
+
+        XCTAssertEqual(itemsObserver.events.dropFirst(), [.next(2, expectedItems)])
+    }
 }
 
 class MockUSDPriceUseCase: USDPriceUseCase {

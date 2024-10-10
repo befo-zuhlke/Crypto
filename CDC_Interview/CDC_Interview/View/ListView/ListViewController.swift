@@ -150,12 +150,13 @@ class ItemPriceFetcher: Fetching {
             let prices = usdResult.map { usd in
                 guard let match = allPrices.first(where: { allPrice in
                     allPrice.id == usd.id
-                } ) else {
+                } ), shouldUseNewAPI else {
                     return usd
                 }
 
                 return match
             }
+
             let searchedPrice = prices
                 .filter {
                     if let searchText, searchText.isEmpty == false {
