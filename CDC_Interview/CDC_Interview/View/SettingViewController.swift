@@ -14,6 +14,7 @@ struct SettingView: View {
         VStack {
             Toggle("Support EUR", isOn: $viewModel.supportEUR)
         }
+        .padding()
     }
 }
 
