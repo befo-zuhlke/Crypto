@@ -8,26 +8,28 @@ class AllPriceUseCase {
 
     func fetchItems() -> Observable<[AnyPricable]> {
         let itemsObservable = Observable<[AnyPricable]>.create { observer in
-            DispatchQueue.global().asyncAfter(deadline: .now() + 2) { // Note: add 2 seconds to simulate API response time
-                let path = Bundle.main.path(forResource: "allPrices", ofType: "json")!
 
-                do {
-                    let data = try Data(contentsOf: URL(fileURLWithPath: path))
-                    let allPrices = try JSONDecoder().decode(AllPrice.self, from: data)
-                    DispatchQueue.main.async {
-                        observer.onNext(allPrices.data.map(AnyPricable.init))
-                        observer.onCompleted()
-                    }
+            let path = Bundle.main.path(forResource: "allPrices", ofType: "json")!
 
-                } catch {
-                    print(error)
-                    observer.onError(NSError(domain: "File Error", code: 404, userInfo: nil))
-                    return
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path))
+                let allPrices = try JSONDecoder().decode(AllPrice.self, from: data)
+                DispatchQueue.main.async {
+                    observer.onNext(allPrices.data.map(AnyPricable.init))
+                    observer.onCompleted()
                 }
 
+            } catch {
+                print(error)
+                observer.onError(NSError(domain: "File Error", code: 404, userInfo: nil))
+                return Disposables.create()
             }
+
+
             return Disposables.create()
         }
+        .delay(.seconds(2), scheduler: MainScheduler.instance)
+
         return itemsObservable
     }
 }
