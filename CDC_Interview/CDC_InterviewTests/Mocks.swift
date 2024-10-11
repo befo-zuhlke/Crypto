@@ -61,4 +61,12 @@ class MockFeatureFlagProvider: FeatureFlagProvider {
             self.result ?? false
         }
     }
+
+    var updateCallCount = 0
+    var updateArgs: (flag: FeatureFlagType?, newValue: Bool?)
+    override func update(flag: FeatureFlagType, newValue: Bool) {
+        updateCallCount += 1
+        updateArgs = (flag, newValue)
+        super.update(flag: flag, newValue: newValue)
+    }
 }

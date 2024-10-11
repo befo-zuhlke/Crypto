@@ -9,7 +9,7 @@ typealias SettingViewController = UIHostingController<SettingView>
 
 
 struct SettingView: View {
-    @StateObject var viewModel: SettingModel = .init()
+    @StateObject var viewModel: ViewModel = .init()
     var body: some View {
         VStack {
             Toggle("Support EUR", isOn: $viewModel.supportEUR)
@@ -18,28 +18,28 @@ struct SettingView: View {
     }
 }
 
-class SettingModel: ObservableObject {
+extension SettingView {
+    class ViewModel: ObservableObject {
 
-    var bag = Set<AnyCancellable>()
+        var bag = Set<AnyCancellable>()
 
-    @Published var supportEUR: Bool = false {
-        didSet {
-            featureFlagProvider.update(flag: .supportEUR, newValue: supportEUR)
+        @Published var supportEUR: Bool = false
+        let featureFlagProvider: FeatureFlagProvider
+
+        init(dependency: Dependency = Dependency.shared) {
+            self.featureFlagProvider = dependency.resolve(FeatureFlagProvider.self)!
+            self.supportEUR = self.featureFlagProvider.getValue(flag: .supportEUR)
+
+            $supportEUR
+                .removeDuplicates()
+                .sink { [unowned self] in
+                featureFlagProvider.update(flag: .supportEUR, newValue: $0)
+            }
+            .store(in: &bag)
         }
-    }
-    
-    let featureFlagProvider: FeatureFlagProvider
-    
-    init() {
-        self.featureFlagProvider = Dependency.shared.resolve(FeatureFlagProvider.self)!
-        self.supportEUR = self.featureFlagProvider.getValue(flag: .supportEUR)
-
-        $supportEUR.sink { [unowned self] in
-            featureFlagProvider.update(flag: .supportEUR, newValue: $0)
-        }
-        .store(in: &bag)
     }
 }
+
 
 #Preview {
     SettingView(viewModel: .init())

@@ -38,6 +38,7 @@
 		92363E912CB7D9490097FAB7 /* Obervable+Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E902CB7D9420097FAB7 /* Obervable+Util.swift */; };
 		92363E942CB7D9D80097FAB7 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E932CB7D9D60097FAB7 /* Mocks.swift */; };
 		92363E962CB8BC180097FAB7 /* CellViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E952CB8BC180097FAB7 /* CellViewModelTests.swift */; };
+		92363E992CB8C6AE0097FAB7 /* SettingsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92363E982CB8C6AE0097FAB7 /* SettingsViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +82,7 @@
 		92363E902CB7D9420097FAB7 /* Obervable+Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Obervable+Util.swift"; sourceTree = "<group>"; };
 		92363E932CB7D9D60097FAB7 /* Mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 		92363E952CB8BC180097FAB7 /* CellViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellViewModelTests.swift; sourceTree = "<group>"; };
+		92363E982CB8C6AE0097FAB7 /* SettingsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,6 +214,7 @@
 				1FBEC5A22C940DE300732A9C /* ListViewControllerTests.swift */,
 				92363E852CB6937A0097FAB7 /* ItemDetailViewModelTests.swift */,
 				92363E952CB8BC180097FAB7 /* CellViewModelTests.swift */,
+				92363E982CB8C6AE0097FAB7 /* SettingsViewModelTests.swift */,
 			);
 			path = CDC_InterviewTests;
 			sourceTree = "<group>";
@@ -376,6 +379,7 @@
 				92363E822CB5ACE90097FAB7 /* Test+Fakes.swift in Sources */,
 				1FBEC5A32C940DE300732A9C /* ListViewControllerTests.swift in Sources */,
 				92363E942CB7D9D80097FAB7 /* Mocks.swift in Sources */,
+				92363E992CB8C6AE0097FAB7 /* SettingsViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
