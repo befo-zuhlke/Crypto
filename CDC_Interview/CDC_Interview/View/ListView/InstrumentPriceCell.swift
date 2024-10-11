@@ -20,58 +20,54 @@ class InstrumentPriceCell: UITableViewCell {
     func configure(price: AnyPricable) {
         viewModel.price = price
 
-        viewModel.title$.asDriver(onErrorDriveWith: .empty())
+        viewModel.$title.asDriver(onErrorDriveWith: .empty())
             .drive(textLabel!.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.description$.asDriver(onErrorDriveWith: .empty())
+        viewModel.$description.asDriver(onErrorDriveWith: .empty())
             .drive(detailTextLabel!.rx.text)
             .disposed(by: disposeBag)
         
-        viewModel.backgroundColor$.asDriver(onErrorDriveWith: .empty())
+        viewModel.$backgroundColor.asDriver(onErrorDriveWith: .empty())
             .drive(self.rx.backgroundColor)
-            .disposed(by: disposeBag)
-        
-        // only set viewed after 3 seconds
-        Observable<Void>.just(())
-            .delay(.seconds(3), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [unowned self] in
-                viewModel.hasViewed$.accept(true)
-            })
             .disposed(by: disposeBag)
     }
 }
 
 extension InstrumentPriceCell {
-    class ViewModel: Equatable {
-        static func == (lhs: InstrumentPriceCell.ViewModel, rhs: InstrumentPriceCell.ViewModel) -> Bool {
-            lhs.price?.id == rhs.price?.id
-        }
+    class ViewModel {
 
         var bag: DisposeBag = .init()
 
         @Observed var price: (AnyPricable)?
+        @Observed var title: String = ""
+        @Observed var description: String = ""
+        @Observed var backgroundColor: UIColor = .white
+        @Observed var hasViewed: Bool = false
 
-        let title$: BehaviorRelay<String> = .init(value: "")
-        let description$: BehaviorRelay<String> = .init(value: "")
-        let backgroundColor$: BehaviorRelay<UIColor> = .init(value: .white)
-        let hasViewed$: BehaviorRelay<Bool> = .init(value: false)
-
-        init() {
+        init(scheduler: SchedulerType = MainScheduler.instance) {
             $price
                 .map { $0?.name ?? "" }
-                .bind(to: title$)
+                .bind(to: $title)
                 .disposed(by: bag)
 
             $price
                 .compactMap { $0?.prices }
                 .map(Self.toUSDPrice)
-                .bind(to: description$)
+                .bind(to: $description)
                 .disposed(by: bag)
 
-            hasViewed$
+            $hasViewed
                 .map { $0 ? .white : .lightGray }
-                .bind(to: backgroundColor$)
+                .bind(to: $backgroundColor)
+                .disposed(by: bag)
+
+            // only set viewed after 3 seconds
+            Observable<Void>.just(())
+                .delay(.seconds(3), scheduler: scheduler)
+                .subscribe(onNext: { [unowned self] in
+                    hasViewed = true
+                })
                 .disposed(by: bag)
         }
 
