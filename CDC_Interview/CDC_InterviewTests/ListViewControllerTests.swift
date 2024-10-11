@@ -35,11 +35,11 @@ final class ListViewControllerTests: XCTestCase {
             FeatureFlagProvider()
         }
 
-        dep.register(Navigating.self) { _ in
-            MockNavigator()
-        }
-
-        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
+        let sut = ListViewController.ViewModel(
+            navigator: MockNavigator(),
+            dependency: dep,
+            scheduler: scheduler
+        )
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
 
@@ -69,11 +69,12 @@ final class ListViewControllerTests: XCTestCase {
         dep.register(FeatureFlagProvider.self) { _ in
             FeatureFlagProvider()
         }
-        dep.register(Navigating.self) { _ in
-            MockNavigator()
-        }
 
-        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
+        let sut = ListViewController.ViewModel(
+            navigator: MockNavigator(),
+            dependency: dep,
+            scheduler: scheduler
+        )
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
 
@@ -109,11 +110,12 @@ final class ListViewControllerTests: XCTestCase {
         dep.register(FeatureFlagProvider.self) { _ in
             FeatureFlagProvider()
         }
-        dep.register(Navigating.self) { _ in
-            MockNavigator()
-        }
 
-        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
+        let sut = ListViewController.ViewModel(
+            navigator: MockNavigator(),
+            dependency: dep,
+            scheduler: scheduler
+        )
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
 
@@ -152,11 +154,11 @@ final class ListViewControllerTests: XCTestCase {
             FeatureFlagProvider()
         }
 
-        dep.register(Navigating.self) { _ in
-            MockNavigator()
-        }
-
-        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
+        let sut = ListViewController.ViewModel(
+            navigator: MockNavigator(),
+            dependency: dep,
+            scheduler: scheduler
+        )
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
 
@@ -221,7 +223,11 @@ final class ListViewControllerTests: XCTestCase {
             mockNav
         }
 
-        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
+        let sut = ListViewController.ViewModel(
+            navigator: mockNav,
+            dependency: dep,
+            scheduler: scheduler
+        )
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
 
@@ -276,7 +282,11 @@ final class ListViewControllerTests: XCTestCase {
             mockNav
         }
 
-        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
+        let sut = ListViewController.ViewModel(
+            navigator: mockNav,
+            dependency: dep,
+            scheduler: scheduler
+        )
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
 
@@ -311,7 +321,11 @@ final class ListViewControllerTests: XCTestCase {
             mockNav
         }
 
-        let sut = ListViewController.ViewModel(dependency: dep, scheduler: scheduler)
+        let sut = ListViewController.ViewModel(
+            navigator: mockNav,
+            dependency: dep,
+            scheduler: scheduler
+        )
         let itemsObserver = scheduler.createObserver([AnyPricable].self)
         sut.items.bind(to: itemsObserver).disposed(by: bag)
 

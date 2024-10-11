@@ -12,14 +12,10 @@ class ListViewController: UIViewController {
     private let searchBar = UISearchBar()
     private let disposeBag = DisposeBag()
 
-    private lazy var vm = ViewModel()
+    private lazy var vm = ViewModel(navigator: navigationController!)
 
     init(dependency: Dependency = Dependency.shared) {
         super.init(nibName: nil, bundle: nil)
-
-        dependency.register(Navigating.self) { _ in
-            self.navigationController!
-        }
     }
 
     required init?(coder: NSCoder) {
@@ -94,10 +90,14 @@ extension ListViewController {
         private var flagProvider: FeatureFlagProvider
         private var navigator: Navigating
 
-        init(dependency: Dependency = Dependency.shared, scheduler: SchedulerType = MainScheduler.instance) {
+        init(
+            navigator: Navigating,
+            dependency: Dependency = Dependency.shared,
+            scheduler: SchedulerType = MainScheduler.instance
+        ) {
             fetcher = dependency.resolve(Fetching.self)!
             flagProvider = dependency.resolve(FeatureFlagProvider.self)!
-            navigator = dependency.resolve(Navigating.self)!
+            self.navigator = navigator
 
             let fetchItems = fetchItems(fetcher: fetcher)
 
