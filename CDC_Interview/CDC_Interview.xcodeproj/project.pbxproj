@@ -137,20 +137,19 @@
 		1F9670082C91A7E1004DB8FD /* CDC_Interview */ = {
 			isa = PBXGroup;
 			children = (
-				92363E922CB7D95D0097FAB7 /* Extensions */,
-				92363E902CB7D9420097FAB7 /* Obervable+Util.swift */,
-				92363E8D2CB7CB320097FAB7 /* Navigation */,
+				1F9670372C931B8A004DB8FD /* allPrices.json */,
+				1F9670272C91A919004DB8FD /* usdPrices.json */,
+				1F9670172C91A7E3004DB8FD /* Info.plist */,
 				1F9670092C91A7E1004DB8FD /* AppDelegate.swift */,
 				1F96700B2C91A7E1004DB8FD /* SceneDelegate.swift */,
-				1F96702E2C92C084004DB8FD /* View */,
-				1F9670302C92C097004DB8FD /* Shared */,
-				1F96702F2C92C08F004DB8FD /* Entities */,
-				1F96700F2C91A7E1004DB8FD /* Main.storyboard */,
 				1F9670122C91A7E3004DB8FD /* Assets.xcassets */,
+				1F96702F2C92C08F004DB8FD /* Entities */,
+				92363E922CB7D95D0097FAB7 /* Extensions */,
 				1F9670142C91A7E3004DB8FD /* LaunchScreen.storyboard */,
-				1F9670272C91A919004DB8FD /* usdPrices.json */,
-				1F9670372C931B8A004DB8FD /* allPrices.json */,
-				1F9670172C91A7E3004DB8FD /* Info.plist */,
+				1F96700F2C91A7E1004DB8FD /* Main.storyboard */,
+				92363E8D2CB7CB320097FAB7 /* Navigation */,
+				1F9670302C92C097004DB8FD /* Shared */,
+				1F96702E2C92C084004DB8FD /* View */,
 			);
 			path = CDC_Interview;
 			sourceTree = "<group>";
@@ -165,9 +164,9 @@
 		1F96702E2C92C084004DB8FD /* View */ = {
 			isa = PBXGroup;
 			children = (
+				927D96332CB8E9D30081F7C3 /* Settings */,
 				1F96703E2C939E5E004DB8FD /* DetailsView */,
 				1F96703D2C939E4D004DB8FD /* ListView */,
-				1F9670342C92C965004DB8FD /* SettingViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -183,6 +182,7 @@
 		1F9670302C92C097004DB8FD /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				92363E832CB5AD710097FAB7 /* Fetching.swift */,
 				1F96702C2C92C073004DB8FD /* Dependency.swift */,
 				1F9670382C931DC0004DB8FD /* USDPriceUseCase.swift */,
 				1F9670322C92C0C3004DB8FD /* AllPriceUseCase.swift */,
@@ -194,7 +194,6 @@
 		1F96703D2C939E4D004DB8FD /* ListView */ = {
 			isa = PBXGroup;
 			children = (
-				92363E832CB5AD710097FAB7 /* Fetching.swift */,
 				1F96700D2C91A7E1004DB8FD /* ListViewController.swift */,
 				1F96702A2C91C704004DB8FD /* InstrumentPriceCell.swift */,
 			);
@@ -234,8 +233,17 @@
 		92363E922CB7D95D0097FAB7 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				92363E902CB7D9420097FAB7 /* Obervable+Util.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		927D96332CB8E9D30081F7C3 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				1F9670342C92C965004DB8FD /* SettingViewController.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
