@@ -6,7 +6,7 @@ import RxCocoa
 class USDPriceUseCase {
     private let disposeBag = DisposeBag()
 
-    func fetchItems() -> Observable<[AnyPricable]> {
+    func fetchItems(scheduler: SchedulerType = MainScheduler.instance) -> Observable<[AnyPricable]> {
         let itemsObservable = Observable<[AnyPricable]>.create { observer in
 
             let path = Bundle.main.path(forResource: "usdPrices", ofType: "json")!
@@ -18,20 +18,16 @@ class USDPriceUseCase {
 
             do {
                 let items = try JSONDecoder().decode([USDPrice].self, from: data)
-                DispatchQueue.main.async {
-                    observer.onNext(items.map(AnyPricable.init))
-                    observer.onCompleted()
-                }
+                observer.onNext(items.map(AnyPricable.init))
+                observer.onCompleted()
             } catch {
-                DispatchQueue.main.async {
-                    observer.onError(NSError(domain: "Decoding Error: \(error)", code: 0, userInfo: nil))
-                    observer.onCompleted()
-                }
+                observer.onError(NSError(domain: "Decoding Error: \(error)", code: 0, userInfo: nil))
+                observer.onCompleted()
             }
 
             return Disposables.create()
         }
-        .delay(.seconds(2), scheduler: MainScheduler.instance)
+            .delay(.seconds(2), scheduler: scheduler)
 
         return itemsObservable
     }

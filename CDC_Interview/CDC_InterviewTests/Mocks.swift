@@ -20,14 +20,14 @@ class MockNavigator: Navigating {
 
 class MockUSDPriceUseCase: USDPriceUseCase {
     var stubbedFetchItemsResult: Observable<[AnyPricable]>!
-    override func fetchItems() -> Observable<[AnyPricable]> {
+    override func fetchItems(scheduler: SchedulerType) -> Observable<[AnyPricable]> {
         return stubbedFetchItemsResult
     }
 }
 
 class MockAllPriceUseCase: AllPriceUseCase {
     var stubbedFetchItemsResult: Observable<[AnyPricable]>!
-    override func fetchItems() -> Observable<[AnyPricable]> {
+    override func fetchItems(scheduler: SchedulerType) -> Observable<[AnyPricable]> {
         return stubbedFetchItemsResult
     }
 }
