@@ -27,7 +27,6 @@ class USDPriceUseCase {
 
             return Disposables.create()
         }
-            .delay(.seconds(2), scheduler: scheduler)
 
         return itemsObservable
     }
