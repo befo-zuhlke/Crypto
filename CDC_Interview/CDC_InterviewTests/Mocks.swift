@@ -8,16 +8,6 @@
 import RxSwift
 @testable import CDC_Interview
 
-class MockNavigator: Navigating {
-
-    var callCount = 0
-    var toDetailViewArgs: AnyPricable?
-    func toDetailView(price: AnyPricable) {
-        callCount += 1
-        toDetailViewArgs = price
-    }
-}
-
 class MockUSDPriceUseCase: USDPriceUseCase {
     var stubbedFetchItemsResult: Observable<[AnyPricable]>!
     override func fetchItems(scheduler: SchedulerType) -> Observable<[AnyPricable]> {

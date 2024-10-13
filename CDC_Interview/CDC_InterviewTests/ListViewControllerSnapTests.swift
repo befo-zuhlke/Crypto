@@ -10,6 +10,7 @@ import SnapshotTesting
 import RxTest
 import RxSwift
 @testable import CDC_Interview
+import SwiftUI
 
 final class ListViewControllerSnapTests: XCTestCase {
 
@@ -36,7 +37,7 @@ final class ListViewControllerSnapTests: XCTestCase {
         }
 
         // Create the view controller after registering dependencies
-        let vc = UINavigationController(rootViewController: ListViewController())
+        let vc = UINavigationController(rootViewController: UIHostingController(rootView: ItemList()))
 
         vc.view.layoutIfNeeded()
 
