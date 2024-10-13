@@ -7,10 +7,11 @@
 
 import XCTest
 import SnapshotTesting
+import SwiftUI
 import RxTest
 import RxSwift
 @testable import CDC_Interview
-import SwiftUI
+
 
 final class ListViewControllerSnapTests: XCTestCase {
 
@@ -37,16 +38,16 @@ final class ListViewControllerSnapTests: XCTestCase {
         }
 
         // Create the view controller after registering dependencies
-        let vc = UINavigationController(rootViewController: UIHostingController(rootView: ItemList()))
+        let vc = UIHostingController(rootView: ItemList())
 
-        vc.view.layoutIfNeeded()
+        vc.loadViewIfNeeded()
 
+        let window = UIWindow(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
+        window.rootViewController = vc
+        window.makeKeyAndVisible()
         // Start the scheduler
         scheduler.start()
 
-        // Allow the UI to layout
-        try await Task.sleep(for: .seconds(4.0))
-
-        assertSnapshot(of: vc, as: .image)
+        assertSnapshot(of: vc, as: .wait(for: 1, on: .image))
     }
 }
