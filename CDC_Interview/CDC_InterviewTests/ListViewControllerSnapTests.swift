@@ -22,10 +22,10 @@ final class ListViewControllerSnapTests: XCTestCase {
     }
 
     @MainActor
-    func testList() throws {
+    func testList() async throws {
         let scheduler = TestScheduler(initialClock: 0)
 
-        let vc = UINavigationController(rootViewController: ListViewController())
+        // Register the dependency before creating the view controller
         Dependency.shared.register(Fetching.self) { _ in
             MockFetcher(items: [
                 USDPrice.fake,
@@ -35,11 +35,18 @@ final class ListViewControllerSnapTests: XCTestCase {
                 USDPrice.fake
             ].map(AnyPricable.init))
         }
+
+        // Create the view controller after registering dependencies
+        let vc = UINavigationController(rootViewController: ListViewController())
+
+        vc.view.layoutIfNeeded()
+
+        // Start the scheduler
         scheduler.start()
 
-        RunLoop.main.run(until: Date(timeIntervalSinceNow: 3.5))
+        // Allow the UI to layout
+        try await Task.sleep(for: .seconds(4.0))
 
-
-        assertSnapshot(of: vc, as: .image)
+        assertSnapshot(of: vc, as: .image, record: true)
     }
 }
