@@ -39,6 +39,7 @@
 		92551CCC2CB90C0E00B701B3 /* ListViewControllerSnapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92551CCB2CB90C0E00B701B3 /* ListViewControllerSnapTests.swift */; };
 		92551D1B2CB9DB4200B701B3 /* ItemList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92551D1A2CB9DB4200B701B3 /* ItemList.swift */; };
 		92551D1E2CB9E6D100B701B3 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92551D1D2CB9E6C800B701B3 /* Crypto.swift */; };
+		9270B7042CBBE5000096B396 /* usdPrices.json in Resources */ = {isa = PBXBuildFile; fileRef = 9270B7032CBBE5000096B396 /* usdPrices.json */; };
 		92D921772CB8E3F000AA2554 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 92D921762CB8E3F000AA2554 /* InlineSnapshotTesting */; };
 		92D921792CB8E3F000AA2554 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 92D921782CB8E3F000AA2554 /* SnapshotTesting */; };
 		92D9217D2CB8E49C00AA2554 /* ItemDetailUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D9217C2CB8E49C00AA2554 /* ItemDetailUITests.swift */; };
@@ -75,7 +76,7 @@
 		92363E832CB5AD710097FAB7 /* Fetching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetching.swift; sourceTree = "<group>"; };
 		92363E852CB6937A0097FAB7 /* ItemDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailViewModelTests.swift; sourceTree = "<group>"; };
 		92363E8A2CB72CDE0097FAB7 /* ItemDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailsView.swift; sourceTree = "<group>"; };
-		92363E8C2CB7C5260097FAB7 /* CDC_Interview.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = CDC_Interview.xctestplan; sourceTree = "<group>"; };
+		92363E8C2CB7C5260097FAB7 /* cov.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = cov.xctestplan; sourceTree = "<group>"; };
 		92363E8E2CB7CB3D0097FAB7 /* Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
 		92363E902CB7D9420097FAB7 /* Obervable+Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Obervable+Util.swift"; sourceTree = "<group>"; };
 		92363E932CB7D9D60097FAB7 /* Mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
@@ -86,6 +87,7 @@
 		92551CCB2CB90C0E00B701B3 /* ListViewControllerSnapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewControllerSnapTests.swift; sourceTree = "<group>"; };
 		92551D1A2CB9DB4200B701B3 /* ItemList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemList.swift; sourceTree = "<group>"; };
 		92551D1D2CB9E6C800B701B3 /* Crypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
+		9270B7032CBBE5000096B396 /* usdPrices.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = usdPrices.json; sourceTree = "<group>"; };
 		92D9217C2CB8E49C00AA2554 /* ItemDetailUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -118,7 +120,7 @@
 		1F966FFD2C91A7E1004DB8FD = {
 			isa = PBXGroup;
 			children = (
-				92363E8C2CB7C5260097FAB7 /* CDC_Interview.xctestplan */,
+				92363E8C2CB7C5260097FAB7 /* cov.xctestplan */,
 				1F9670362C931640004DB8FD /* README.md */,
 				1F9670082C91A7E1004DB8FD /* CDC_Interview */,
 				1FBEC5A12C940DE300732A9C /* CDC_InterviewTests */,
@@ -211,6 +213,7 @@
 		1FBEC5A12C940DE300732A9C /* CDC_InterviewTests */ = {
 			isa = PBXGroup;
 			children = (
+				9270B7032CBBE5000096B396 /* usdPrices.json */,
 				92363E932CB7D9D60097FAB7 /* Mocks.swift */,
 				92363E812CB5ACD40097FAB7 /* Test+Fakes.swift */,
 				1FBEC5A22C940DE300732A9C /* ListViewControllerTests.swift */,
@@ -358,6 +361,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9270B7042CBBE5000096B396 /* usdPrices.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

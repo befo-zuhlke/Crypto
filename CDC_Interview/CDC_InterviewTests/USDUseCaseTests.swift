@@ -195,6 +195,6 @@ final class USDUseCaseTests: XCTestCase {
             )
         ]
 
-        XCTAssertEqual(observer.events.dropLast(), [.next(2, expected.map(AnyPricable.init))])
+        XCTAssertEqual(observer.events.dropLast(), [.next(0, expected.map(AnyPricable.init))])
     }
 }

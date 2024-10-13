@@ -9,6 +9,15 @@
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:CDC_Interview.xcodeproj",
+          "identifier" : "1F9670052C91A7E1004DB8FD",
+          "name" : "CDC_Interview"
+        }
+      ]
+    },
     "targetForVariableExpansion" : {
       "containerPath" : "container:CDC_Interview.xcodeproj",
       "identifier" : "1F9670052C91A7E1004DB8FD",

@@ -25,15 +25,14 @@ final class ListViewControllerSnapTests: XCTestCase {
     func testList() async throws {
         let scheduler = TestScheduler(initialClock: 0)
 
+        let testBundle = Bundle(for: type(of: self))
+        let path = testBundle.path(forResource: "usdPrices", ofType: "json")!
+        let data = try Data(contentsOf: URL(fileURLWithPath: path))
+        let items = try JSONDecoder().decode([USDPrice].self, from: data).map(AnyPricable.init)
+
         // Register the dependency before creating the view controller
         Dependency.shared.register(Fetching.self) { _ in
-            MockFetcher(items: [
-                USDPrice.fake,
-                USDPrice.fake,
-                USDPrice.fake,
-                USDPrice.fake,
-                USDPrice.fake
-            ].map(AnyPricable.init))
+            MockFetcher(items: items)
         }
 
         // Create the view controller after registering dependencies
@@ -47,6 +46,6 @@ final class ListViewControllerSnapTests: XCTestCase {
         // Allow the UI to layout
         try await Task.sleep(for: .seconds(4.0))
 
-        assertSnapshot(of: vc, as: .image, record: true)
+        assertSnapshot(of: vc, as: .image)
     }
 }
