@@ -6,4 +6,5 @@
 - I have a tagged commit which was the first iteration i thought made sense, but did not follow the readme and how the current code was being used, just in case.
 - A mixture of UIKit, SwiftUI, RXSwift and Combine is used just to show i am capable of using all of them together, as some legacy projects will not be on the latest swift tech stack.
 - also add tests with the new swift testing, just as a learning experiment  
-- The ListViewController Snapshot test was not respecting the mocked dependencies i was passing in, i have a few suspicions as to why, but ultimately to fix it it would either be changing the list VC to swiftUI or setting up the test so that i could remove the delay on the fake API call.
+- Moved the List VC to swift UI so the app and scene delgates could be deleted, reducing overhead and increasing code coverage
+- after some experimenting how to use snapshot, still not as consistent as i would like but good enough for it's use case
