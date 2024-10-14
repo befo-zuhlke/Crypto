@@ -30,14 +30,14 @@ struct AllPrice: Decodable {
     }
 }
 
-protocol Pricable: Equatable {
+protocol Pricable {
     var id: Int { get }
     var name: String { get }
     var prices: [Price] { get }
     var tags: [Tag] { get }
 }
 
-struct Price: Equatable { // Conforming to Equatable
+struct Price { // Conforming to Equatable
     let value: Decimal
     let currency: Currency
 }
@@ -64,14 +64,7 @@ extension AllPrice.Price: Pricable {
     }
 }
 
-// Default implementation of Equatable for Pricable
-extension Pricable {
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.id == rhs.id && lhs.name == rhs.name && lhs.prices == rhs.prices && lhs.tags == rhs.tags
-    }
-}
-
-struct AnyPricable: Pricable {
+struct AnyPricable: Pricable, Equatable {
     private let base: any Pricable
 
     var id: Int { base.id }
