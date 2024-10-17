@@ -38,6 +38,7 @@
 		92551D1B2CB9DB4200B701B3 /* ItemList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92551D1A2CB9DB4200B701B3 /* ItemList.swift */; };
 		92551D1E2CB9E6D100B701B3 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92551D1D2CB9E6C800B701B3 /* Crypto.swift */; };
 		9270B7042CBBE5000096B396 /* usdPrices.json in Resources */ = {isa = PBXBuildFile; fileRef = 9270B7032CBBE5000096B396 /* usdPrices.json */; };
+		92951F3F2CC0F710003B7D87 /* ItemPriceFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92951F3E2CC0F704003B7D87 /* ItemPriceFetcherTests.swift */; };
 		92D921772CB8E3F000AA2554 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 92D921762CB8E3F000AA2554 /* InlineSnapshotTesting */; };
 		92D921792CB8E3F000AA2554 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 92D921782CB8E3F000AA2554 /* SnapshotTesting */; };
 		92D9217D2CB8E49C00AA2554 /* ItemDetailUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D9217C2CB8E49C00AA2554 /* ItemDetailUITests.swift */; };
@@ -83,6 +84,7 @@
 		92551D1A2CB9DB4200B701B3 /* ItemList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemList.swift; sourceTree = "<group>"; };
 		92551D1D2CB9E6C800B701B3 /* Crypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
 		9270B7032CBBE5000096B396 /* usdPrices.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = usdPrices.json; sourceTree = "<group>"; };
+		92951F3E2CC0F704003B7D87 /* ItemPriceFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPriceFetcherTests.swift; sourceTree = "<group>"; };
 		92D9217C2CB8E49C00AA2554 /* ItemDetailUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -205,6 +207,7 @@
 		1FBEC5A12C940DE300732A9C /* CDC_InterviewTests */ = {
 			isa = PBXGroup;
 			children = (
+				92951F3E2CC0F704003B7D87 /* ItemPriceFetcherTests.swift */,
 				9270B7032CBBE5000096B396 /* usdPrices.json */,
 				92363E932CB7D9D60097FAB7 /* Mocks.swift */,
 				92363E812CB5ACD40097FAB7 /* Test+Fakes.swift */,
@@ -375,6 +378,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92951F3F2CC0F710003B7D87 /* ItemPriceFetcherTests.swift in Sources */,
 				92551CCC2CB90C0E00B701B3 /* ListViewControllerSnapTests.swift in Sources */,
 				92551CC82CB8F1A700B701B3 /* USDUseCaseTests.swift in Sources */,
 				92551CCA2CB8F51000B701B3 /* AllPriceUseCaseTests.swift in Sources */,

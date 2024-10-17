@@ -42,7 +42,7 @@ class ItemPriceFetcher: Fetching {
         return v1.amb(v2).map(search)
      }
 
-     static func filterSearch(searchText: String?) -> (_: [AnyPricable]) -> [AnyPricable] {
+     private static func filterSearch(searchText: String?) -> (_: [AnyPricable]) -> [AnyPricable] {
          { items in
              items.filter {
                  guard let searchText = searchText, !searchText.isEmpty else {
