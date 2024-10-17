@@ -44,16 +44,15 @@ struct ItemList: View {
     var body: some View {
         NavigationView{
             List {
-                ForEach(vm.items, id: \.id) { item in
-                    NavigationLink(destination: ItemDetailView(item: item)) {
-                        InstrumentPrice(price: .constant(item))
+                ForEach($vm.items, id: \.id) { item in
+                    NavigationLink(destination: ItemDetailView(item: item.wrappedValue)) {
+                        InstrumentPrice(price: item)
                     }
                 }
             }
         }
         .searchable(text: $vm.searchTerm)
     }
-
 }
 
 
