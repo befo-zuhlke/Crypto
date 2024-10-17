@@ -25,6 +25,8 @@ class ItemPriceFetcher: Fetching {
 
     func fetchItems(searchText: String?) -> Observable<[AnyPricable]> {
 
+        let search = Self.filterSearch(searchText: searchText)
+
         let v1 = featureFlagProvider.observeFlagValue(flag: .supportEUR)
             .filter { $0 == false }
             .flatMapLatest { _ in
@@ -37,6 +39,18 @@ class ItemPriceFetcher: Fetching {
                 self.allUseCase.fetchItems()
             }
 
-        return v1.amb(v2)
-    }
+        return v1.amb(v2).map(search)
+     }
+
+     static func filterSearch(searchText: String?) -> (_: [AnyPricable]) -> [AnyPricable] {
+         { items in
+             items.filter {
+                 guard let searchText = searchText, !searchText.isEmpty else {
+                     return true
+                 }
+
+                 return $0.name.lowercased().contains(searchText.lowercased())
+             }
+         }
+     }
 }

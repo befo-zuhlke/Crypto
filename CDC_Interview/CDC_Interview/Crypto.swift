@@ -1,32 +1,33 @@
-//
-//  CryptoApp.swift
-//  CDC_Interview
-//
-//  Created by Ben Fowler on 12/10/2024.
-//
-
 import SwiftUI
 
 @main
 struct Crypto: App {
 
+    private var featureFlags = FeatureFlagProvider()
+    
     init() {
-        Dependency.shared.register(USDPriceUseCase.self) { resolver in
-            return USDPriceUseCase()
+        registerDependencies()
+    }
+
+    private func registerDependencies() {
+
+        Dependency.shared.register(USDPriceUseCase.self) { _ in
+            USDPriceUseCase()
         }
 
-        Dependency.shared.register(AllPriceUseCase.self) { resolver in
-            return AllPriceUseCase()
+        Dependency.shared.register(AllPriceUseCase.self) { _ in
+            AllPriceUseCase()
         }
 
-        Dependency.shared.register(FeatureFlagProvider.self) { resolver in
-            return FeatureFlagProvider()
+        Dependency.shared.register(FeatureFlagProvider.self) { _ in
+            featureFlags
         }
 
         Dependency.shared.register(Fetching.self) { resolver in
-            return ItemPriceFetcher()
+            ItemPriceFetcher()
         }
     }
+
     var body: some Scene {
         WindowGroup {
             LandingView()

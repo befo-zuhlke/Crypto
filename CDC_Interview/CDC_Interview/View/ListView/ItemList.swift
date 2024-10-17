@@ -33,7 +33,6 @@ struct LandingView: View {
                         .tag(1)
                 }
             }
-            .navigationTitle("Items")
         }
     }
 }
