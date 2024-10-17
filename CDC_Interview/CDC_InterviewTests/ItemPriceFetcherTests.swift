@@ -61,11 +61,11 @@ struct PriceFetcherTests {
         let scheduler = TestScheduler(initialClock: 0)
 
         let items = [
-            AnyPricable(USDPrice.fake),
-            AnyPricable(USDPrice.fake),
-            AnyPricable(USDPrice.fake),
+            AnyPricable(USDPrice(id: 0, name: "ABC", usd: 0.0, tags: [])),
+            AnyPricable(USDPrice(id: 0, name: "123", usd: 0.0, tags: [])),
+            AnyPricable(USDPrice(id: 0, name: "TESTING", usd: 0.0, tags: [])),
         ]
-
+        
         let nameToSearch = items[indexToSearch].name
 
         let dep = Dependency.shared
