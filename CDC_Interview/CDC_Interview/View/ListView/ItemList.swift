@@ -39,13 +39,13 @@ struct LandingView: View {
 
 struct ItemList: View {
 
-    @StateObject var vm = ViewModel()
+    @ObservedObject var vm = ViewModel()
 
     var body: some View {
-        NavigationView{
+        NavigationStack {
             List {
-                ForEach($vm.items, id: \.id) { item in
-                    NavigationLink(destination: ItemDetailView(item: item.wrappedValue)) {
+                ForEach(vm.items, id: \.id) { item in
+                    NavigationLink(destination: ItemDetailView(item: item)) {
                         InstrumentPrice(price: item)
                     }
                 }
@@ -101,7 +101,7 @@ extension ItemList {
 }
 
 struct InstrumentPrice: UIViewRepresentable {
-    @Binding var price: AnyPricable
+    var price: AnyPricable
 
     func makeUIView(context: Context) -> InstrumentPriceCell {
         InstrumentPriceCell()

@@ -64,7 +64,7 @@ extension AllPrice.Price: Pricable {
     }
 }
 
-struct AnyPricable: Pricable, Equatable {
+class AnyPricable: ObservableObject, Pricable, Equatable {
     private let base: any Pricable
 
     var id: Int { base.id }

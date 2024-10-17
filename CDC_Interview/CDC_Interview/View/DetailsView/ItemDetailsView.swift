@@ -10,7 +10,7 @@ import RxCombine
 import RxSwift
 
 struct ItemDetailView: View {
-    let item: AnyPricable
+    @ObservedObject var item: AnyPricable
     @StateObject var vm: ViewModel
 
     init(item: AnyPricable) {
@@ -31,7 +31,6 @@ struct ItemDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-
         .navigationTitle(vm.title)
 
         Spacer()
