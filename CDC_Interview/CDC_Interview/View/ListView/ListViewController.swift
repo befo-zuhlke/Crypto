@@ -115,7 +115,6 @@ extension ListViewController {
                 search$
             )
             .map { $0.1 }
-            .debug("(((")
             .flatMapLatest(fetchItems)
             .asDriver(onErrorDriveWith: .empty())
             .drive(items)
