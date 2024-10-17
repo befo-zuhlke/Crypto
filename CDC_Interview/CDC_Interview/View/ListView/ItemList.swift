@@ -33,7 +33,7 @@ struct LandingView: View {
                         .tag(1)
                 }
             }
-            .navigationTitle("Search and Tabs")
+            .navigationTitle("Items")
         }
     }
 }
@@ -43,10 +43,12 @@ struct ItemList: View {
     @StateObject var vm = ViewModel()
 
     var body: some View {
-        List {
-            ForEach(vm.items, id: \.id) { item in
-                NavigationLink(destination: ItemDetailView(item: item)) {
-                    InstrumentPrice(price: .constant(item))
+        NavigationView{
+            List {
+                ForEach(vm.items, id: \.id) { item in
+                    NavigationLink(destination: ItemDetailView(item: item)) {
+                        InstrumentPrice(price: .constant(item))
+                    }
                 }
             }
         }
